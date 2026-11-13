@@ -468,7 +468,7 @@ const QUIZ_DATA = {
         },
         {
           id: "craving_balanced",
-          label"Tenho energia equilibrada e como nas horas certas",
+          label: "Tenho energia equilibrada e como nas horas certas",
           sublabel: "Fome normal que surge apenas quando realmente preciso me alimentar",
           icon: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>`
         }
