@@ -1,18 +1,16 @@
 /**
- * Caminhada Fit - Motor do Funil (Estilo SlimKit / Noom)
- * Interface Humanizada e Fluida em Português
+ * Caminhada Fit - Engine do Funil Fiel ao SlimKit
  */
 
 (function () {
   "use strict";
 
-  // Estado do Funil
   const state = {
     currentStepIndex: 0,
     answers: {},
     units: {
-      height: "metric", // 'metric' (cm) padrão
-      weight: "metric", // 'metric' (kg) padrão
+      height: "metric",
+      weight: "metric",
     },
     metrics: {
       currentBmi: 0,
@@ -24,7 +22,6 @@
     utmParams: {},
   };
 
-  // Elementos da DOM
   const el = {
     progressBar: document.getElementById("quiz-progress-bar"),
     progressText: document.getElementById("quiz-progress-text"),
@@ -37,19 +34,11 @@
     offerView: document.getElementById("offer-view"),
   };
 
-  // 1. Rastreamento e retenção de UTMs
   function initUtmTracking() {
     const params = new URLSearchParams(window.location.search);
     const utms = [
-      "utm_source",
-      "utm_medium",
-      "utm_campaign",
-      "utm_term",
-      "utm_content",
-      "adset_id",
-      "c_id",
-      "ad_id",
-      "fbpxls",
+      "utm_source", "utm_medium", "utm_campaign", "utm_term",
+      "utm_content", "adset_id", "c_id", "ad_id", "fbpxls",
     ];
 
     utms.forEach((key) => {
@@ -63,7 +52,6 @@
     } catch (e) {}
   }
 
-  // 2. Monta o link do checkout com os parâmetros
   function getCheckoutUrl() {
     const base = QUIZ_DATA.config.checkoutUrl;
     try {
@@ -80,17 +68,14 @@
     }
   }
 
-  // 3. Renderiza a etapa atual do quiz
   function renderStep(index) {
     const totalSteps = QUIZ_DATA.steps.length;
     const step = QUIZ_DATA.steps[index];
 
-    // Atualiza Barra de Progresso
     const pct = Math.round(((index + 1) / totalSteps) * 100);
     if (el.progressBar) el.progressBar.style.width = `${pct}%`;
-    if (el.progressText) el.progressText.textContent = `${pct}% Concluído`;
+    if (el.progressText) el.progressText.textContent = `Etapa ${index + 1} de ${totalSteps}`;
 
-    // Botão Voltar
     if (el.backBtn) {
       if (index === 0) {
         el.backBtn.classList.add("opacity-0", "pointer-events-none");
@@ -103,22 +88,17 @@
 
     let html = "";
 
-    // Cabeçalho da Pergunta
     if (step.type !== "interstitial") {
       html += `
-        <div class="mb-6 text-center animate-step">
-          <span class="inline-block px-3 py-1 mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 rounded-full">
-            Etapa ${index + 1} de ${totalSteps}
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-snug">
+        <div class="mb-6 text-center fade-in-step">
+          <h2 class="text-2xl sm:text-[28px] font-bold text-gray-900 tracking-tight leading-tight">
             ${step.title}
           </h2>
-          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-slate-600 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
+          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-gray-600 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
         </div>
       `;
     }
 
-    // Corpo conforme o tipo
     if (step.type === "single") {
       html += renderSingleStep(step);
     } else if (step.type === "multiple") {
@@ -137,28 +117,25 @@
     bindStepEvents(step);
   }
 
-  // Opção Única (Avanço Imediato ao Clicar)
   function renderSingleStep(step) {
     const selected = state.answers[step.id];
-    let html = '<div class="space-y-3 max-w-lg mx-auto animate-step">';
+    let html = '<div class="space-y-3 max-w-lg mx-auto fade-in-step">';
     step.options.forEach((opt) => {
       const isChecked = selected === opt.id;
       html += `
-        <button type="button" data-val="${opt.id}" class="opt-single-btn opt-card w-full text-left p-4 sm:p-5 flex items-center justify-between group ${isChecked ? "is-selected" : ""}">
-          <div class="flex items-center space-x-4">
-            ${opt.icon ? `<div class="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
+        <button type="button" data-val="${opt.id}" class="opt-single-btn quiz-card w-full text-left flex items-center justify-between group ${isChecked ? "is-active" : ""}">
+          <div class="flex items-center space-x-3.5">
+            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 border border-gray-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base sm:text-lg text-slate-900 flex items-center gap-2">
+              <div class="font-semibold text-base text-gray-900 flex items-center gap-2">
                 ${opt.label}
-                ${opt.badge ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${opt.badge}</span>` : ""}
+                ${opt.badge ? `<span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">${opt.badge}</span>` : ""}
               </div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
-          <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            isChecked ? "border-blue-600 bg-blue-600" : "border-slate-300 group-hover:border-slate-400"
-          }">
-            <div class="w-2 h-2 rounded-full bg-white ${isChecked ? "opacity-100" : "opacity-0"}"></div>
+          <div class="radio-indicator">
+            <div class="radio-dot"></div>
           </div>
         </button>
       `;
@@ -167,33 +144,30 @@
     return html;
   }
 
-  // Múltipla Escolha
   function renderMultipleStep(step) {
     const selectedArr = state.answers[step.id] || [];
-    let html = '<div class="space-y-3 max-w-lg mx-auto animate-step">';
+    let html = '<div class="space-y-3 max-w-lg mx-auto fade-in-step">';
     step.options.forEach((opt) => {
       const isChecked = selectedArr.includes(opt.id);
       html += `
-        <button type="button" data-val="${opt.id}" class="opt-multi-btn opt-card w-full text-left p-4 sm:p-5 flex items-center justify-between group ${isChecked ? "is-selected" : ""}">
-          <div class="flex items-center space-x-4">
-            ${opt.icon ? `<div class="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
+        <button type="button" data-val="${opt.id}" class="opt-multi-btn quiz-card w-full text-left flex items-center justify-between group ${isChecked ? "is-active" : ""}">
+          <div class="flex items-center space-x-3.5">
+            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 border border-gray-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base sm:text-lg text-slate-900">${opt.label}</div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              <div class="font-semibold text-base text-gray-900">${opt.label}</div>
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
-          <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            isChecked ? "border-blue-600 bg-blue-600" : "border-slate-300 group-hover:border-slate-400"
-          }">
-            <svg class="w-4 h-4 text-white ${isChecked ? "opacity-100" : "opacity-0"}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          <div class="checkbox-indicator">
+            <svg class="w-3.5 h-3.5 text-white ${isChecked ? "opacity-100" : "opacity-0"}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           </div>
         </button>
       `;
     });
 
     html += `
-      <div class="pt-4">
-        <button type="button" id="multi-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+      <div class="pt-3">
+        <button type="button" id="multi-next-btn" class="btn-action w-full text-base">
           Continuar →
         </button>
       </div>
@@ -201,37 +175,35 @@
     return html;
   }
 
-  // Tela Intersticial Educativa (Estilo SlimKit)
   function renderInterstitialStep(step) {
     const c = step.content;
     let starsHtml = "";
     if (c.rating) {
       starsHtml = Array(c.rating)
         .fill(
-          '<svg class="w-5 h-5 text-amber-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>'
+          '<svg class="w-4 h-4 text-amber-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>'
         )
         .join("");
     }
 
     return `
-      <div class="max-w-md mx-auto text-center animate-step space-y-6">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          ${step.badge || "Comprovado por Especialistas"}
+      <div class="max-w-md mx-auto text-center fade-in-step space-y-5">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+          ${step.badge || "Revisão Médica"}
         </div>
 
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-snug">
           ${c.headline}
         </h2>
 
         ${
           c.statNumber
             ? `
-          <div class="p-6 rounded-2xl bg-blue-50 border border-blue-100 my-4 text-center">
-            <div class="text-4xl sm:text-5xl font-black text-blue-700">
+          <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-100 my-4 text-center">
+            <div class="text-4xl font-extrabold text-blue-700">
               ${c.statNumber}
             </div>
-            <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+            <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-xs mx-auto leading-relaxed">
               ${c.statLabel}
             </p>
           </div>
@@ -239,15 +211,15 @@
             : ""
         }
 
-        <p class="text-sm sm:text-base text-slate-700 leading-relaxed text-left sm:text-center">
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left sm:text-center">
           ${c.bodyText}
         </p>
 
         ${
           c.quote
             ? `
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-left">
-            <p class="text-sm italic text-slate-700">${c.quote}</p>
+          <div class="p-4 rounded-xl bg-white border border-gray-200 text-left">
+            <p class="text-sm italic text-gray-700">${c.quote}</p>
             <p class="text-xs text-blue-700 font-semibold mt-2">${c.author}</p>
           </div>
         `
@@ -257,16 +229,16 @@
         ${
           c.rating
             ? `
-          <div class="flex flex-col items-center gap-1">
+          <div class="flex flex-col items-center gap-1 pt-1">
             <div class="flex gap-1">${starsHtml}</div>
-            <p class="text-xs text-slate-600 font-medium">${c.author} · <span class="text-emerald-700 font-bold">${c.verified}</span></p>
+            <p class="text-xs text-gray-600 font-medium">${c.author} · <span class="text-emerald-700 font-semibold">${c.verified}</span></p>
           </div>
         `
             : ""
         }
 
         <div class="pt-2">
-          <button type="button" id="interstitial-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+          <button type="button" id="interstitial-next-btn" class="btn-action w-full text-base">
             ${step.buttonText || "Continuar →"}
           </button>
         </div>
@@ -274,113 +246,106 @@
     `;
   }
 
-  // Idade
   function renderNumberStep(step) {
     const val = state.answers[step.id] || step.defaultValue || 40;
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
-        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+      <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
+        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm">
           <div class="flex items-baseline justify-center gap-2">
-            <span id="number-display" class="text-6xl font-black text-blue-600">${val}</span>
-            <span class="text-slate-500 text-lg font-medium">${step.unit}</span>
+            <span id="number-display" class="text-6xl font-black text-blue-700">${val}</span>
+            <span class="text-gray-500 text-lg font-medium">${step.unit}</span>
           </div>
 
           <div class="mt-8 flex items-center justify-center gap-4">
-            <button type="button" id="num-minus-btn" class="w-13 h-13 w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
+            <button type="button" id="num-minus-btn" class="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 text-2xl font-bold text-gray-800 flex items-center justify-center transition-colors">
               -
             </button>
-            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-600 h-2 bg-slate-200 rounded-lg cursor-pointer">
-            <button type="button" id="num-plus-btn" class="w-13 h-13 w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
+            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-700 h-2 bg-gray-200 rounded-lg cursor-pointer">
+            <button type="button" id="num-plus-btn" class="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 text-2xl font-bold text-gray-800 flex items-center justify-center transition-colors">
               +
             </button>
           </div>
         </div>
 
-        <button type="button" id="number-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+        <button type="button" id="number-next-btn" class="btn-action w-full text-base">
           Continuar →
         </button>
       </div>
     `;
   }
 
-  // Altura
   function renderHeightStep(step) {
     const heightVal = state.answers.height?.cm || 168;
 
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
-        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
-          <label class="block text-xs uppercase tracking-wider text-slate-500 mb-3 font-bold">Altura em Centímetros</label>
+      <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
+        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm">
+          <label class="block text-xs uppercase tracking-wider text-gray-500 mb-3 font-semibold">Altura em Centímetros</label>
           <div class="flex items-center justify-center gap-2">
-            <input type="number" id="height-cm" min="130" max="220" value="${heightVal}" class="w-40 py-3 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-extrabold text-3xl text-center focus:border-blue-600 focus:bg-white focus:outline-none">
-            <span class="text-xl font-bold text-slate-600">cm</span>
+            <input type="number" id="height-cm" min="130" max="220" value="${heightVal}" class="w-40 py-3 px-4 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 font-bold text-3xl text-center focus:border-blue-700 focus:bg-white focus:outline-none">
+            <span class="text-xl font-bold text-gray-600">cm</span>
           </div>
-          <p class="text-xs text-slate-400 mt-3">Exemplo: 168 cm (1 metro e 68 cm)</p>
+          <p class="text-xs text-gray-400 mt-3">Exemplo: 168 cm (1 metro e 68 cm)</p>
         </div>
 
-        <button type="button" id="height-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+        <button type="button" id="height-next-btn" class="btn-action w-full text-base">
           Continuar →
         </button>
       </div>
     `;
   }
 
-  // Peso Atual e Peso Meta
   function renderWeightDualStep(step) {
     const weightData = state.answers.weights || { current: 78, goal: 62 };
 
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
+      <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
         <div class="space-y-4">
-          <!-- Peso Atual -->
-          <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-left">
+          <div class="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Seu Peso Atual</span>
-              <span class="text-xs text-slate-400 font-medium">Ponto de Partida</span>
+              <span class="text-xs uppercase tracking-wider text-gray-500 font-semibold">Seu Peso Atual</span>
+              <span class="text-xs text-gray-400">Ponto de Partida</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-extrabold text-3xl focus:border-blue-600 focus:bg-white focus:outline-none">
-              <span class="text-slate-600 text-xl font-bold w-10">kg</span>
+              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 font-bold text-3xl focus:border-blue-700 focus:bg-white focus:outline-none">
+              <span class="text-gray-600 text-xl font-bold w-10">kg</span>
             </div>
           </div>
 
-          <!-- Peso Meta -->
-          <div class="p-6 rounded-2xl bg-white border-2 border-emerald-500/50 shadow-sm text-left">
+          <div class="p-5 rounded-2xl bg-white border-2 border-emerald-500/40 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-emerald-700 font-bold">Seu Peso Desejado</span>
-              <span class="text-xs text-emerald-600 font-medium">Meta de Saúde</span>
+              <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Seu Peso Desejado</span>
+              <span class="text-xs text-emerald-600">Meta Saudável</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-3 px-4 rounded-xl bg-emerald-50/50 border border-emerald-400 text-slate-900 font-extrabold text-3xl focus:border-emerald-600 focus:bg-white focus:outline-none">
+              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-50/40 border border-emerald-400 text-gray-900 font-bold text-3xl focus:border-emerald-600 focus:bg-white focus:outline-none">
               <span class="text-emerald-700 text-xl font-bold w-10">kg</span>
             </div>
           </div>
         </div>
 
-        <p class="text-xs text-slate-500 leading-relaxed">
+        <p class="text-xs text-gray-500 leading-relaxed">
           🔒 Suas respostas são sigilosas e usadas apenas para montar o cronograma seguro da sua caminhada.
         </p>
 
-        <button type="button" id="weight-next-btn" class="btn-primary w-full py-4 px-6 text-lg bg-emerald-600 hover:bg-emerald-700">
+        <button type="button" id="weight-next-btn" class="btn-action w-full text-base bg-emerald-600 hover:bg-emerald-700">
           Gerar Meu Diagnóstico Completo ⚡
         </button>
       </div>
     `;
   }
 
-  // Eventos de cada tela
   function bindStepEvents(step) {
     if (step.type === "single") {
       document.querySelectorAll(".opt-single-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const val = btn.getAttribute("data-val");
           state.answers[step.id] = val;
-          // Feedback de clique suave
-          document.querySelectorAll(".opt-single-btn").forEach((b) => b.classList.remove("is-selected"));
-          btn.classList.add("is-selected");
+          document.querySelectorAll(".opt-single-btn").forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
           setTimeout(() => {
             goToNextStep();
-          }, 160);
+          }, 150);
         });
       });
     } else if (step.type === "multiple") {
@@ -469,7 +434,6 @@
     }
   }
 
-  // Cálculos de IMC e Projeção
   function calculateMetrics() {
     const w = state.answers.weights || { current: 78, goal: 62 };
     const h = state.answers.height || { cm: 168 };
@@ -482,7 +446,6 @@
     state.metrics.currentBmi = (weightKg / (heightM * heightM)).toFixed(1);
     state.metrics.targetBmi = (goalKg / (heightM * heightM)).toFixed(1);
 
-    // Média saudável de 0.8kg a 1kg por semana com caminhada em Zona 2
     const weeksNeeded = Math.max(4, Math.round(state.metrics.kgToLose / 0.9));
     state.metrics.daysToGoal = weeksNeeded * 7;
 
@@ -496,7 +459,6 @@
     state.metrics.targetDate = `${targetDateObj.getDate()} de ${meses[targetDateObj.getMonth()]} de ${targetDateObj.getFullYear()}`;
   }
 
-  // 4. Tela de Carregamento e Análise Algorítmica (SlimKit)
   function finishQuizAndStartLoader() {
     calculateMetrics();
 
@@ -509,9 +471,9 @@
     const loaderCircle = document.getElementById("loader-circle-progress");
 
     const stages = [
-      { pct: 28, text: "Analisando seu perfil metabólico e faixa etária..." },
-      { pct: 58, text: "Calculando a frequência cardíaca ideal na Zona 2..." },
-      { pct: 84, text: "Ajustando cadência e inclinação para proteger os joelhos..." },
+      { pct: 25, text: "Analisando seu perfil metabólico e faixa etária..." },
+      { pct: 55, text: "Calculando a frequência cardíaca ideal na Zona 2..." },
+      { pct: 82, text: "Ajustando cadência e inclinação para proteger os joelhos..." },
       { pct: 100, text: "Finalizando seu plano personalizado de 28 dias!" },
     ];
 
@@ -530,12 +492,11 @@
         clearInterval(interval);
         setTimeout(() => {
           showResultsScreen();
-        }, 500);
+        }, 450);
       }
-    }, 1100);
+    }, 1000);
   }
 
-  // 5. Dashboard de Resultados Pessoais
   function showResultsScreen() {
     el.loaderView.classList.add("hidden");
     el.resultsView.classList.remove("hidden");
@@ -555,7 +516,6 @@
     }
   }
 
-  // 6. Captura de E-mail
   function showEmailCaptureScreen() {
     el.resultsView.classList.add("hidden");
     el.emailView.classList.remove("hidden");
@@ -579,7 +539,6 @@
     }
   }
 
-  // 7. Página de Oferta do Ebook
   function showOfferScreen() {
     el.emailView.classList.add("hidden");
     el.offerView.classList.remove("hidden");
@@ -597,7 +556,6 @@
       btn.href = checkoutUrl;
     });
 
-    // Accordion do FAQ
     document.querySelectorAll(".faq-toggle").forEach((btn) => {
       btn.addEventListener("click", () => {
         const content = btn.nextElementSibling;
@@ -615,7 +573,6 @@
     });
   }
 
-  // Timer de 15 Minutos
   function startCountdownTimer(seconds) {
     let timeLeft = seconds;
     const timerDisplays = document.querySelectorAll(".countdown-clock");
@@ -635,7 +592,6 @@
     }, 1000);
   }
 
-  // Inicialização
   function init() {
     initUtmTracking();
 

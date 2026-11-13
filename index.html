@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Plano Personalizado de Caminhada e Emagrecimento | Caminhada Fit</title>
   
-  <meta name="description" content="Faça este teste rápido de 60 segundos e descubra seu protocolo de 28 dias de caminhada para queimar a gordura da barriga sem impacto nos joelhos." />
+  <meta name="description" content="Descubra seu protocolo personalizado de 28 dias de caminhada metabólica na esteira para queimar a gordura da barriga sem impacto nos joelhos." />
   <meta name="theme-color" content="#ffffff" />
 
-  <!-- Tailwind CSS CDN para renderização rápida -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            slate: {
-              850: '#152033',
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              600: '#1d4ed8',
+              700: '#1e40af',
             }
           }
         }
@@ -24,417 +27,389 @@
     }
   </script>
 
-  <!-- Estilos Customizados (Humanizados e Clean) -->
+  <!-- Estilos Customizados Fiel ao SlimKit -->
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 
-<body class="min-h-full flex flex-col bg-[#f8fafc] text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+<body class="min-h-full flex flex-col bg-[#f9fafb] text-gray-900 antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- ==================== TOPO & BARRA DE PROGRESSO ==================== -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3">
+  <!-- ==================== HEADER COM PROGRESSO MINIMALISTA ==================== -->
+  <header class="sticky top-0 z-40 bg-white border-b border-gray-200/80 px-4 py-3">
     <div class="max-w-xl mx-auto flex items-center justify-between">
       
       <!-- Botão Voltar -->
-      <button type="button" id="quiz-back-btn" class="p-2 -ml-2 text-slate-400 hover:text-slate-800 transition-colors opacity-0 pointer-events-none" aria-label="Voltar etapa">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+      <button type="button" id="quiz-back-btn" class="p-1.5 -ml-1.5 text-gray-400 hover:text-gray-700 transition-colors opacity-0 pointer-events-none" aria-label="Voltar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <!-- Logo Simples e Humano -->
-      <div class="flex items-center space-x-2">
-        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <!-- Logo SlimKit style -->
+      <div class="flex items-center space-x-1.5">
+        <div class="w-6 h-6 rounded-md bg-blue-700 flex items-center justify-center text-white">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
-        <span class="font-bold tracking-tight text-slate-900 text-base">Caminhada<span class="text-blue-600 font-extrabold">Fit</span></span>
+        <span class="font-bold tracking-tight text-gray-900 text-sm">Caminhada<span class="text-blue-700 font-extrabold">Fit</span></span>
       </div>
 
-      <!-- Selo de Credibilidade -->
-      <div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Método Científico</span>
+      <!-- Indicador do Step Atual -->
+      <div class="text-xs font-medium text-gray-500" id="quiz-progress-text">
+        Etapa 1 de 22
       </div>
     </div>
 
-    <!-- Barra de Progresso Discreta -->
-    <div class="max-w-xl mx-auto mt-2">
-      <div class="progress-container">
-        <div id="quiz-progress-bar" class="progress-fill w-[7%]"></div>
-      </div>
-      <div class="flex justify-between items-center text-[11px] text-slate-500 mt-1.5 px-0.5 font-medium">
-        <span id="quiz-progress-text">Etapa 1</span>
-        <span>Objetivo: Queima de Gordura Abdominal</span>
+    <!-- Barra de Progresso Slim (Exata do SlimKit) -->
+    <div class="max-w-xl mx-auto mt-2.5">
+      <div class="top-progress-bar">
+        <div id="quiz-progress-bar" class="top-progress-fill w-[5%]"></div>
       </div>
     </div>
   </header>
 
-  <!-- ==================== ÁREA PRINCIPAL DO FUNIL ==================== -->
+  <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
   <main class="flex-1 flex flex-col justify-center px-4 py-6 sm:py-10">
 
-    <!-- 1. CONTAINER DO QUIZ -->
+    <!-- 1. QUIZ VIEW CONTAINER -->
     <div id="quiz-view" class="w-full max-w-xl mx-auto">
       <div id="step-container">
-        <!-- Inserido dinamicamente pelo app.js -->
+        <!-- Renderizado dinamicamente pelo app.js -->
       </div>
     </div>
 
-    <!-- 2. TELA DE ANÁLISE / ALGORITMO (SLIMKIT STYLE) -->
-    <div id="loader-view" class="w-full max-w-md mx-auto hidden text-center py-8 animate-step">
-      <div class="relative w-32 h-32 mx-auto mb-6">
+    <!-- 2. ANIMAÇÃO DE CARREGAMENTO & ALGORITMO (SLIMKIT STYLE) -->
+    <div id="loader-view" class="w-full max-w-md mx-auto hidden text-center py-8 fade-in-step">
+      <div class="relative w-28 h-28 mx-auto mb-5">
         <svg class="circular-chart" viewBox="0 0 36 36">
           <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           <path id="loader-circle-progress" class="circle" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span id="loader-percent" class="text-3xl font-extrabold text-slate-900">0%</span>
-          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Calculando</span>
+          <span id="loader-percent" class="text-2xl font-bold text-gray-900">0%</span>
         </div>
       </div>
 
-      <h3 class="text-2xl font-bold text-slate-900 mb-2">Estruturando seu Plano de Caminhada</h3>
-      <p id="loader-status-text" class="text-sm text-blue-700 font-medium min-h-[24px]">Analisando seu perfil metabólico...</p>
+      <h3 class="text-xl font-bold text-gray-900 mb-1">Montando Seu Cronograma de 28 Dias</h3>
+      <p id="loader-status-text" class="text-xs text-blue-700 font-medium min-h-[20px]">Analisando seu perfil metabólico...</p>
 
-      <div class="mt-8 space-y-3 text-left max-w-xs mx-auto">
-        <div class="flex items-center gap-3 text-sm text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
-          <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">✓</div>
-          <span>Zona metabólica identificada</span>
+      <div class="mt-6 space-y-2.5 text-left max-w-xs mx-auto">
+        <div class="flex items-center gap-2.5 text-xs text-gray-700 bg-white p-2.5 rounded-xl border border-gray-200">
+          <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">✓</div>
+          <span>Zona metabólica calibrada</span>
         </div>
-        <div class="flex items-center gap-3 text-sm text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
-          <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">✓</div>
-          <span>Ajuste de impacto para joelhos e coluna</span>
+        <div class="flex items-center gap-2.5 text-xs text-gray-700 bg-white p-2.5 rounded-xl border border-gray-200">
+          <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">✓</div>
+          <span>Impacto reduzido para joelhos e coluna</span>
         </div>
-        <div class="flex items-center gap-3 text-sm text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
-          <div class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold animate-pulse">⟳</div>
-          <span>Cronograma diário de 28 dias montado</span>
+        <div class="flex items-center gap-2.5 text-xs text-gray-700 bg-white p-2.5 rounded-xl border border-gray-200">
+          <div class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold animate-pulse">⟳</div>
+          <span>Sequência de inclinação calculada</span>
         </div>
       </div>
     </div>
 
-    <!-- 3. DASHBOARD DE RESULTADOS E DIAGNÓSTICO -->
-    <div id="results-view" class="w-full max-w-xl mx-auto hidden animate-step space-y-6">
+    <!-- 3. RESULTADOS & DIAGNÓSTICO PERSONALIZADO -->
+    <div id="results-view" class="w-full max-w-xl mx-auto hidden fade-in-step space-y-5">
       
       <div class="text-center">
-        <span class="inline-block px-3 py-1 mb-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full">
+        <span class="inline-block px-3 py-1 mb-2 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-full">
           Diagnóstico Concluído • Alta Compatibilidade
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           Sua Previsão de Emagrecimento
         </h2>
-        <p class="text-sm sm:text-base text-slate-600 mt-2 max-w-md mx-auto">
-          Com base no seu perfil, você pode atingir com segurança seu peso meta de <strong class="text-blue-700 res-goal-weight">62 kg</strong> até:
+        <p class="text-sm text-gray-600 mt-1 max-w-md mx-auto">
+          Com base nas suas respostas, você pode atingir seu peso meta de <strong class="text-blue-700 res-goal-weight">62 kg</strong> até:
         </p>
       </div>
 
-      <!-- Cartão da Data Meta -->
-      <div class="p-6 sm:p-8 rounded-2xl bg-white border border-blue-200 text-center shadow-sm relative overflow-hidden">
-        <div class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-1">Previsão Estimada de Chegada</div>
-        <div class="text-3xl sm:text-4xl font-extrabold text-blue-700 tracking-tight res-target-date">24 de Outubro de 2026</div>
-        <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-          <span>🎯 Estimativa de Redução: <strong class="res-kg-loss">16 kg</strong></span>
+      <!-- Previsão Data Meta -->
+      <div class="p-6 rounded-2xl bg-white border border-blue-200 text-center shadow-sm">
+        <div class="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Previsão Estimada de Chegada</div>
+        <div class="text-3xl sm:text-4xl font-bold text-blue-700 tracking-tight res-target-date">24 de Outubro de 2026</div>
+        <div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+          <span>🎯 Redução Total Prevista: <strong class="res-kg-loss">16 kg</strong></span>
         </div>
       </div>
 
       <!-- Comparativo de IMC -->
-      <div class="grid grid-cols-2 gap-3 sm:gap-4">
-        <div class="p-5 rounded-2xl bg-white border border-slate-200 text-center shadow-sm">
-          <div class="text-xs uppercase font-bold text-slate-500">Seu IMC Atual</div>
-          <div class="text-3xl sm:text-4xl font-black text-amber-600 my-1 res-current-bmi">28.4</div>
-          <div class="text-xs text-amber-700 font-semibold">Gordura Abdominal Elevada</div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-4 rounded-xl bg-white border border-gray-200 text-center shadow-sm">
+          <div class="text-xs font-medium text-gray-500 uppercase">Seu IMC Atual</div>
+          <div class="text-3xl font-black text-amber-600 my-1 res-current-bmi">28.4</div>
+          <div class="text-xs text-amber-700 font-medium">Gordura Abdominal Elevada</div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white border border-emerald-300 text-center shadow-sm">
-          <div class="text-xs uppercase font-bold text-emerald-700">Seu IMC Meta</div>
-          <div class="text-3xl sm:text-4xl font-black text-emerald-600 my-1 res-target-bmi">22.1</div>
-          <div class="text-xs text-emerald-700 font-semibold">Faixa de Saúde Ideal</div>
+        <div class="p-4 rounded-xl bg-white border border-emerald-300 text-center shadow-sm">
+          <div class="text-xs font-medium text-emerald-700 uppercase">Seu IMC Meta</div>
+          <div class="text-3xl font-black text-emerald-600 my-1 res-target-bmi">22.1</div>
+          <div class="text-xs text-emerald-700 font-medium">Faixa de Saúde Ideal</div>
         </div>
       </div>
 
-      <!-- Gráfico Comparativo Limpo -->
-      <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <h4 class="font-bold text-slate-900 text-base">Projeção de Peso (Próximas Semanas)</h4>
-          <span class="text-xs text-slate-500 font-medium">Modelo Científico</span>
+      <!-- Gráfico Comparativo -->
+      <div class="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="font-bold text-gray-900 text-sm">Projeção de Peso (Próximas Semanas)</h4>
+          <span class="text-xs text-gray-500">Estimativa</span>
         </div>
 
-        <!-- SVG Gráfico Clean -->
-        <div class="w-full h-40 relative">
+        <div class="w-full h-36 relative">
           <svg class="w-full h-full overflow-visible" viewBox="0 0 400 150">
-            <!-- Linhas de Apoio -->
             <line x1="0" y1="30" x2="400" y2="30" stroke="#f1f5f9" stroke-width="1.5" />
             <line x1="0" y1="75" x2="400" y2="75" stroke="#f1f5f9" stroke-width="1.5" />
             <line x1="0" y1="120" x2="400" y2="120" stroke="#f1f5f9" stroke-width="1.5" />
 
-            <!-- Curva 1: Sem o Plano (Estagnação / Subida) -->
-            <path d="M 10 40 Q 150 48, 250 38 T 390 32" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 4" />
-            <circle cx="390" cy="32" r="4" fill="#94a3b8" />
+            <!-- Sem o Plano -->
+            <path d="M 10 40 Q 150 48, 250 38 T 390 32" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4" />
+            <circle cx="390" cy="32" r="3.5" fill="#94a3b8" />
             <text x="270" y="24" fill="#64748b" font-size="11" font-weight="bold">Sem a Caminhada Correta</text>
 
-            <!-- Curva 2: Com o Protocolo de 28 Dias -->
-            <path d="M 10 40 Q 120 75, 230 105 T 390 130" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" />
-            <circle cx="390" cy="130" r="5" fill="#2563eb" />
+            <!-- Com o Protocolo de 28 Dias -->
+            <path d="M 10 40 Q 120 75, 230 105 T 390 130" fill="none" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round" />
+            <circle cx="390" cy="130" r="4.5" fill="#1d4ed8" />
             <text x="230" y="145" fill="#1d4ed8" font-size="11" font-weight="bold">Com o Protocolo de 28 Dias</text>
           </svg>
         </div>
 
-        <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600 pt-3 border-t border-slate-100">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+        <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-500 pt-2.5 border-t border-gray-100">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-gray-400"></span>
             <span>Cardio Exaustivo (Picos de Cortisol)</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-700"></span>
             <span>Caminhada com Inclinação (Zona 2)</span>
           </div>
         </div>
       </div>
 
-      <!-- Botão Avançar -->
       <div class="pt-2">
-        <button type="button" id="results-proceed-btn" class="btn-primary w-full py-4 px-6 text-lg">
+        <button type="button" id="results-proceed-btn" class="btn-action w-full text-base">
           Ver Meu Plano de 28 Dias →
         </button>
       </div>
     </div>
 
     <!-- 4. CAPTURA DE E-MAIL -->
-    <div id="email-view" class="w-full max-w-md mx-auto hidden animate-step text-center space-y-6">
-      <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 mx-auto flex items-center justify-center border border-blue-200">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    <div id="email-view" class="w-full max-w-md mx-auto hidden fade-in-step text-center space-y-5">
+      <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 mx-auto flex items-center justify-center border border-blue-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       </div>
 
       <div>
-        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Onde devemos enviar seu plano?</h3>
-        <p class="text-sm text-slate-600 mt-2">
-          Informe seu e-mail para salvar o resultado do seu teste e receber o acesso ao livro digital completo.
+        <h3 class="text-2xl font-bold text-gray-900">Onde devemos enviar seu plano?</h3>
+        <p class="text-sm text-gray-600 mt-1">
+          Informe seu e-mail para salvar o resultado do seu teste e ter acesso ao livro digital completo.
         </p>
       </div>
 
-      <form id="lead-capture-form" class="space-y-4">
+      <form id="lead-capture-form" class="space-y-3.5">
         <div>
-          <input type="email" id="lead-email-input" required placeholder="Digite seu melhor e-mail aqui..." class="w-full py-4 px-5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 font-medium text-base focus:border-blue-600 focus:outline-none transition-all shadow-sm">
+          <input type="email" id="lead-email-input" required placeholder="Digite seu melhor e-mail..." class="w-full py-3.5 px-4 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder-gray-400 text-base focus:border-blue-700 focus:outline-none shadow-sm">
         </div>
 
-        <button type="submit" class="btn-primary w-full py-4 px-6 text-lg bg-emerald-600 hover:bg-emerald-700">
+        <button type="submit" class="btn-action w-full text-base bg-emerald-600 hover:bg-emerald-700">
           Liberar Meu Plano Personalizado Agora ⚡
         </button>
       </form>
 
-      <div class="flex items-center justify-center gap-2 text-xs text-slate-500">
-        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+      <div class="flex items-center justify-center gap-1.5 text-xs text-gray-500">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
         </svg>
-        <span>Seus dados estão protegidos. Zero spam. Acesso digital imediato.</span>
+        <span>Seus dados estão protegidos. Zero spam. Download imediato.</span>
       </div>
     </div>
 
-    <!-- 5. PÁGINA DE VENDAS DO EBOOK (HUMANA & PROFISSIONAL) -->
-    <div id="offer-view" class="w-full max-w-2xl mx-auto hidden animate-step space-y-10 pb-20">
+    <!-- 5. OFERTA DO EBOOK -->
+    <div id="offer-view" class="w-full max-w-2xl mx-auto hidden fade-in-step space-y-8 pb-16">
       
-      <!-- Barra de Urgência Limpa -->
-      <div class="sticky top-16 z-30 -mx-4 px-4 py-2.5 bg-amber-500 text-white text-center shadow-sm">
-        <div class="flex items-center justify-center gap-2 text-xs sm:text-sm font-bold">
+      <!-- Top Scarcity Bar -->
+      <div class="sticky top-16 z-30 -mx-4 px-4 py-2 bg-amber-500 text-white text-center shadow-sm">
+        <div class="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold">
           <span>⏰ Desconto especial de 66% reservado por:</span>
           <span class="font-mono bg-amber-700/60 px-2 py-0.5 rounded text-white countdown-clock">14:59</span>
         </div>
       </div>
 
-      <!-- Título Principal -->
-      <div class="text-center space-y-3 pt-2">
-        <span class="inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 rounded-full">
-          Livro Digital Completo + Bônus
+      <div class="text-center space-y-2 pt-1">
+        <span class="inline-block px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full">
+          Livro Digital Oficial + 3 Bônus
         </span>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-snug">
           O Protocolo da Caminhada Metabólica de 28 Dias
         </h1>
-        <p class="text-sm sm:text-base text-slate-600 max-w-lg mx-auto leading-relaxed">
-          Elimine a gordura localizada da barriga, reduza o cortisol e volte a usar as roupas que você ama com <strong>sessões simples de caminhada inclinada</strong> para fazer na esteira ou ao ar livre.
+        <p class="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">
+          Elimine a gordura profunda da barriga, reduza o cortisol e volte a usar suas roupas favoritas com <strong>sessões simples de caminhada inclinada</strong> para fazer na esteira ou ao ar livre.
         </p>
       </div>
 
-      <!-- Apresentação do Livro -->
-      <div class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-8">
-        
-        <!-- Mockup do Livro -->
-        <div class="w-48 h-64 book-card p-5 flex flex-col justify-between flex-shrink-0">
+      <!-- Livro & Benefícios -->
+      <div class="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+        <div class="w-44 h-56 rounded-xl bg-gradient-to-br from-blue-800 to-blue-950 p-4 text-white flex flex-col justify-between shadow-md flex-shrink-0">
           <div>
-            <div class="text-[10px] uppercase tracking-wider text-blue-200 font-bold">Ebook Oficial</div>
-            <div class="text-base font-extrabold tracking-tight mt-2 text-white leading-snug">CAMINHADA METABÓLICA</div>
+            <div class="text-[9px] uppercase tracking-wider text-blue-200 font-bold">Ebook Oficial</div>
+            <div class="text-sm font-extrabold mt-1 leading-snug">CAMINHADA METABÓLICA</div>
           </div>
-          <div class="my-auto py-2">
-            <span class="text-xs text-blue-100 font-medium">Método de 28 Dias</span>
+          <div class="my-auto">
+            <span class="text-xs text-blue-200">Protocolo de 28 Dias</span>
           </div>
-          <div class="text-[10px] text-blue-200 pt-2 border-t border-white/20">
+          <div class="text-[9px] text-blue-300 pt-1.5 border-t border-white/20">
             Zona 2 · Impacto Zero
           </div>
         </div>
 
-        <!-- Lista de Benefícios Reais -->
-        <div class="space-y-3 text-left">
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</div>
-            <p class="text-sm text-slate-700"><strong>Guia Dia a Dia:</strong> Tabela com velocidades exatas, inclinações e tempos para cada dia dos seus 28 dias.</p>
+        <div class="space-y-2.5 text-left">
+          <div class="flex items-start gap-2.5">
+            <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">✓</div>
+            <p class="text-xs sm:text-sm text-gray-700"><strong>Guia Diário:</strong> Tabela com inclinações, velocidades e minutos exatos para cada um dos 28 dias.</p>
           </div>
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</div>
-            <p class="text-sm text-slate-700"><strong>Queima sem passar mal:</strong> Ritmo controlado que queima gordura sem te deixar exausto(a) para o restante do dia.</p>
+          <div class="flex items-start gap-2.5">
+            <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">✓</div>
+            <p class="text-xs sm:text-sm text-gray-700"><strong>Sem Fome Incontrolável:</strong> Ritmo que queima gordura sem disparar picos de fome no fim do dia.</p>
           </div>
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</div>
-            <p class="text-sm text-slate-700"><strong>Zero impacto nos joelhos:</strong> Ideal para quem sente dores articulares ou não pode correr.</p>
+          <div class="flex items-start gap-2.5">
+            <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">✓</div>
+            <p class="text-xs sm:text-sm text-gray-700"><strong>Zero Impacto nos Joelhos:</strong> Ideal para quem sente dores articulares ou não pode correr.</p>
           </div>
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</div>
-            <p class="text-sm text-slate-700"><strong>Acesso no Celular ou Computador:</strong> Formato PDF pronto para ler ou imprimir.</p>
+          <div class="flex items-start gap-2.5">
+            <div class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">✓</div>
+            <p class="text-xs sm:text-sm text-gray-700"><strong>Acesso Digital Imediato:</strong> Leia no celular, tablet ou computador.</p>
           </div>
         </div>
       </div>
 
-      <!-- BÔNUS GRATUITOS -->
-      <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+      <!-- Bônus Inclusos -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-3.5">
         <div class="text-center">
-          <span class="text-xs uppercase font-bold tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+          <span class="text-xs uppercase font-bold tracking-wider text-amber-800 bg-amber-100 px-3 py-0.5 rounded-full">
             Inclusos Gratuitamente Hoje
           </span>
-          <h3 class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">Você Leva 3 Bônus Exclusivos de Presente</h3>
+          <h3 class="text-lg font-bold text-gray-900 mt-1.5">Você Recebe 3 Bônus Exclusivos de Presente</h3>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-          <!-- Bônus 1 -->
-          <div class="p-4 rounded-xl bg-white border border-slate-200">
-            <div class="text-xs font-bold text-emerald-700">BÔNUS #1 (R$ 67)</div>
-            <h5 class="font-bold text-slate-900 text-sm mt-1">Guia de Sucos e Refeições que Reduzem o Cortisol</h5>
-            <p class="text-xs text-slate-500 mt-1">Receitas fáceis para controlar a compulsão noturna por doces.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="p-3.5 rounded-xl bg-white border border-gray-200">
+            <div class="text-[11px] font-bold text-emerald-700">BÔNUS #1 (R$ 67)</div>
+            <h5 class="font-bold text-gray-900 text-xs mt-0.5">Sucos e Refeições que Controlam o Cortisol</h5>
+            <p class="text-[11px] text-gray-500 mt-1">Receitas fáceis para saciar a vontade de doces à noite.</p>
           </div>
 
-          <!-- Bônus 2 -->
-          <div class="p-4 rounded-xl bg-white border border-slate-200">
-            <div class="text-xs font-bold text-emerald-700">BÔNUS #2 (R$ 47)</div>
-            <h5 class="font-bold text-slate-900 text-sm mt-1">Rotina de 5 Minutos de Mobilidade para Joelhos</h5>
-            <p class="text-xs text-slate-500 mt-1">Alongamentos rápidos para soltar os quadris e a lombar antes de caminhar.</p>
+          <div class="p-3.5 rounded-xl bg-white border border-gray-200">
+            <div class="text-[11px] font-bold text-emerald-700">BÔNUS #2 (R$ 47)</div>
+            <h5 class="font-bold text-gray-900 text-xs mt-0.5">5 Minutos de Mobilidade para Joelhos</h5>
+            <p class="text-[11px] text-gray-500 mt-1">Alongamentos rápidos para soltar lombar e quadris antes da esteira.</p>
           </div>
 
-          <!-- Bônus 3 -->
-          <div class="p-4 rounded-xl bg-white border border-slate-200">
-            <div class="text-xs font-bold text-emerald-700">BÔNUS #3 (R$ 37)</div>
-            <h5 class="font-bold text-slate-900 text-sm mt-1">Tabela Imprimível de Medidas e Passos</h5>
-            <p class="text-xs text-slate-500 mt-1">Acompanhe sua redução de centímetros e celebre suas vitórias diárias.</p>
+          <div class="p-3.5 rounded-xl bg-white border border-gray-200">
+            <div class="text-[11px] font-bold text-emerald-700">BÔNUS #3 (R$ 37)</div>
+            <h5 class="font-bold text-gray-900 text-xs mt-0.5">Tabela Imprimível de Medidas e Passos</h5>
+            <p class="text-[11px] text-gray-500 mt-1">Acompanhe a redução de centímetros da cintura a cada semana.</p>
           </div>
         </div>
       </div>
 
-      <!-- VALOR E BOTÃO DE COMPRA -->
-      <div class="p-8 rounded-2xl bg-white border-2 border-blue-600 text-center space-y-6 shadow-sm">
+      <!-- Preço e CTA -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-white border-2 border-blue-700 text-center space-y-5 shadow-sm">
         <div>
-          <span class="text-sm text-slate-400 line-through">De R$ 197,00 por apenas:</span>
-          <div class="flex items-center justify-center gap-2 mt-1">
-            <span class="text-5xl font-black text-slate-900">R$ 67</span>
+          <span class="text-xs text-gray-400 line-through">De R$ 197,00 por apenas:</span>
+          <div class="flex items-center justify-center gap-2 mt-0.5">
+            <span class="text-4xl sm:text-5xl font-black text-gray-900">R$ 67</span>
             <div class="text-left">
               <span class="block text-xs font-bold uppercase tracking-wider text-emerald-700">Pagamento Único</span>
-              <span class="block text-xs text-slate-500">Sem mensalidades · Acesso vitalício</span>
+              <span class="block text-[11px] text-gray-500">Sem mensalidade · Acesso vitalício</span>
             </div>
           </div>
         </div>
 
         <div>
-          <a href="#" target="_blank" class="cta-checkout-btn btn-primary block w-full py-5 px-6 text-xl bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 uppercase tracking-wide">
-            Quero Meu Protocolo de 28 Dias por R$ 67 →
+          <a href="#" target="_blank" class="cta-checkout-btn btn-action block w-full py-4 px-5 text-lg bg-emerald-600 hover:bg-emerald-700 uppercase tracking-wide">
+            Garantir Meu Protocolo de 28 Dias por R$ 67 →
           </a>
-          <p class="text-xs text-slate-500 mt-2">⚡ Você recebe o link de download no seu e-mail imediatamente após a confirmação.</p>
+          <p class="text-xs text-gray-500 mt-2">⚡ Link de download enviado diretamente para o seu e-mail após a confirmação.</p>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500">
-          <div class="flex items-center gap-1.5">
-            <span class="text-emerald-600 font-bold">✓</span>
-            <span>Compra Segura com Criptografia</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-emerald-600 font-bold">✓</span>
-            <span>Download Imediato em PDF</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-emerald-600 font-bold">✓</span>
-            <span>Garantia de 60 Dias</span>
-          </div>
+        <div class="pt-3 border-t border-gray-100 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+          <span>✓ Compra 100% Segura</span>
+          <span>✓ Download Imediato em PDF</span>
+          <span>✓ Garantia Total de 60 Dias</span>
         </div>
       </div>
 
-      <!-- GARANTIA BLINDADA DE 60 DIAS -->
-      <div class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row items-center gap-6">
-        <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center flex-shrink-0 text-3xl">
+      <!-- Garantia -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 flex flex-col sm:flex-row items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center flex-shrink-0 text-2xl">
           🛡️
         </div>
-        <div class="text-left space-y-1">
-          <h4 class="text-lg font-bold text-slate-900">Garantia Total de Satisfação de 60 Dias</h4>
-          <p class="text-sm text-slate-600 leading-relaxed">
-            Faça as caminhadas do protocolo durante 2 meses completos. Se você não notar a barriga diminuir, não sentir mais disposição ou simplesmente não gostar do material, basta nos enviar um único e-mail e devolveremos 100% do seu dinheiro. Sem perguntas e sem letras miúdas.
+        <div class="text-left">
+          <h4 class="text-base font-bold text-gray-900">Garantia Total de Satisfação de 60 Dias</h4>
+          <p class="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">
+            Pratique as caminhadas do protocolo durante 60 dias. Se você não notar redução na barriga ou não gostar do conteúdo, devolvemos 100% do seu dinheiro com um único e-mail.
           </p>
         </div>
       </div>
 
-      <!-- DEPOIMENTOS HUMANOS -->
-      <div class="space-y-4">
-        <div class="text-center">
-          <h3 class="text-2xl font-bold text-slate-900">Resultados de Quem Já Começou a Caminhar</h3>
-          <p class="text-sm text-slate-500">Pessoas reais que saíram do sedentarismo sem sofrimento.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-5 rounded-xl bg-white border border-slate-200 space-y-2">
-            <div class="flex text-amber-400 text-sm">★★★★★</div>
-            <p class="text-sm text-slate-600 italic">"Tenho 51 anos e depois da menopausa minha barriga aumentou muito. Eu não aguentava o impacto de correr. Seguindo o passo a passo da esteira com inclinação, perdi 7 kg no primeiro mês e minha disposição voltou."</p>
-            <div class="text-xs font-semibold text-slate-900 pt-1">— Sandra M., 51 anos <span class="text-emerald-700">· Aluna Verificada</span></div>
-          </div>
-
-          <div class="p-5 rounded-xl bg-white border border-slate-200 space-y-2">
-            <div class="flex text-amber-400 text-sm">★★★★★</div>
-            <p class="text-sm text-slate-600 italic">"Achei sensacional a divisão dos treinos. Faço em casa na esteira enquanto assisto ao jornal ou escuto música. Já eliminei 8,5 kg sem passar fome com dietas malucas."</p>
-            <div class="text-xs font-semibold text-slate-900 pt-1">— Carlos E., 44 anos <span class="text-emerald-700">· Aluno Verificado</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FAQ EM ACCORDION -->
+      <!-- Depoimentos -->
       <div class="space-y-3">
-        <h3 class="text-xl font-bold text-slate-900 text-center mb-4">Dúvidas Frequentes</h3>
+        <h3 class="text-xl font-bold text-gray-900 text-center">Depoimentos Reais</h3>
 
-        <div class="rounded-xl bg-white border border-slate-200 overflow-hidden">
-          <button type="button" class="faq-toggle w-full p-4 text-left font-semibold text-slate-900 flex justify-between items-center text-sm sm:text-base">
-            <span>Preciso ter uma esteira cara para fazer?</span>
-            <span class="faq-icon text-slate-400 transition-transform">▼</span>
-          </button>
-          <div class="faq-content hidden p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
-            Não! Você pode usar qualquer esteira residencial, esteira da academia, esteira portátil (walking pad) ou até mesmo fazer na rua seguindo as adaptações para ladeiras e parques que ensinamos no capítulo 3.
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 rounded-xl bg-white border border-gray-200 space-y-1.5">
+            <div class="flex text-amber-400 text-xs">★★★★★</div>
+            <p class="text-xs text-gray-600 italic">"Tenho 51 anos e após a menopausa minha barriga aumentou muito. Eu não aguentava o impacto da corrida. Seguindo o cronograma da esteira com inclinação, perdi 7 kg no primeiro mês!"</p>
+            <div class="text-xs font-semibold text-gray-900 pt-0.5">— Sandra M., 51 anos <span class="text-emerald-700">· Aluna Verificada</span></div>
           </div>
-        </div>
 
-        <div class="rounded-xl bg-white border border-slate-200 overflow-hidden">
-          <button type="button" class="faq-toggle w-full p-4 text-left font-semibold text-slate-900 flex justify-between items-center text-sm sm:text-base">
-            <span>E se eu tiver dor no joelho ou na coluna?</span>
-            <span class="faq-icon text-slate-400 transition-transform">▼</span>
-          </button>
-          <div class="faq-content hidden p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
-            A caminhada com inclinação é a atividade mais recomendada por ortopedistas porque reduz o impacto nas articulações em até 70% em comparação à corrida, queimando a mesma quantidade de calorias.
-          </div>
-        </div>
-
-        <div class="rounded-xl bg-white border border-slate-200 overflow-hidden">
-          <button type="button" class="faq-toggle w-full p-4 text-left font-semibold text-slate-900 flex justify-between items-center text-sm sm:text-base">
-            <span>Como vou receber o livro digital?</span>
-            <span class="faq-icon text-slate-400 transition-transform">▼</span>
-          </button>
-          <div class="faq-content hidden p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
-            Assim que a compra for confirmada, o link de download chega direto no seu e-mail e na tela do seu celular. Você poderá ler em qualquer dispositivo (iPhone, Android ou computador) ou até mesmo imprimir se preferir.
+          <div class="p-4 rounded-xl bg-white border border-gray-200 space-y-1.5">
+            <div class="flex text-amber-400 text-xs">★★★★★</div>
+            <p class="text-xs text-gray-600 italic">"A divisão das semanas é muito prática. Faço em casa na esteira enquanto assisto ao jornal. Já eliminei 8,5 kg sem passar fome com dietas malucas."</p>
+            <div class="text-xs font-semibold text-gray-900 pt-0.5">— Carlos E., 44 anos <span class="text-emerald-700">· Aluno Verificado</span></div>
           </div>
         </div>
       </div>
 
-      <!-- BOTÃO FINAL -->
-      <div class="text-center pt-4">
-        <a href="#" target="_blank" class="cta-checkout-btn btn-primary block w-full py-5 px-6 text-xl bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 uppercase tracking-wide">
+      <!-- FAQ -->
+      <div class="space-y-2.5">
+        <h3 class="text-lg font-bold text-gray-900 text-center mb-3">Dúvidas Frequentes</h3>
+
+        <div class="rounded-xl bg-white border border-gray-200 overflow-hidden">
+          <button type="button" class="faq-toggle w-full p-3.5 text-left font-semibold text-gray-900 flex justify-between items-center text-sm">
+            <span>Preciso de uma esteira cara para fazer?</span>
+            <span class="faq-icon text-gray-400 transition-transform text-xs">▼</span>
+          </button>
+          <div class="faq-content hidden p-3.5 pt-0 text-xs text-gray-600 border-t border-gray-100">
+            Não! Você pode usar qualquer esteira residencial, esteira da academia, esteira portátil (walking pad) ou até mesmo fazer na rua com as técnicas de subida que ensinamos no capítulo 3.
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-white border border-gray-200 overflow-hidden">
+          <button type="button" class="faq-toggle w-full p-3.5 text-left font-semibold text-gray-900 flex justify-between items-center text-sm">
+            <span>E se eu sentir dor no joelho ou na coluna?</span>
+            <span class="faq-icon text-gray-400 transition-transform text-xs">▼</span>
+          </button>
+          <div class="faq-content hidden p-3.5 pt-0 text-xs text-gray-600 border-t border-gray-100">
+            A caminhada com inclinação reduz o impacto sobre as articulações em até 70% em relação à corrida, sendo a mais recomendada por médicos e fisioterapeutas.
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-white border border-gray-200 overflow-hidden">
+          <button type="button" class="faq-toggle w-full p-3.5 text-left font-semibold text-gray-900 flex justify-between items-center text-sm">
+            <span>Como vou receber o livro digital?</span>
+            <span class="faq-icon text-gray-400 transition-transform text-xs">▼</span>
+          </button>
+          <div class="faq-content hidden p-3.5 pt-0 text-xs text-gray-600 border-t border-gray-100">
+            O download é liberado imediatamente no seu e-mail e na tela após o pagamento. Você pode ler no celular, computador ou imprimir.
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão Final -->
+      <div class="text-center pt-2">
+        <a href="#" target="_blank" class="cta-checkout-btn btn-action block w-full py-4 px-5 text-lg bg-emerald-600 hover:bg-emerald-700 uppercase tracking-wide">
           Garantir Meu Acesso com 66% de Desconto →
         </a>
       </div>
@@ -443,12 +418,12 @@
 
   </main>
 
-  <!-- ==================== BARRA FIXA DE COMPRA NO CELULAR ==================== -->
-  <div id="sticky-offer-bar" class="fixed bottom-0 inset-x-0 bg-white/95 border-t border-slate-200 p-3 sm:hidden z-50 backdrop-blur-md hidden shadow-lg">
+  <!-- Sticky Bar Mobile -->
+  <div id="sticky-offer-bar" class="fixed bottom-0 inset-x-0 bg-white/95 border-t border-gray-200 p-3 sm:hidden z-50 backdrop-blur-md hidden shadow-lg">
     <div class="flex items-center justify-between gap-3">
       <div>
-        <div class="text-xs text-slate-400">Preço Promocional</div>
-        <div class="text-xl font-bold text-slate-900">R$ 67 <span class="text-xs text-slate-400 line-through">R$ 197</span></div>
+        <div class="text-[11px] text-gray-400">Preço com Desconto</div>
+        <div class="text-lg font-bold text-gray-900">R$ 67 <span class="text-xs text-gray-400 line-through">R$ 197</span></div>
       </div>
       <a href="#" target="_blank" class="cta-checkout-btn flex-1 py-3 px-4 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 text-center shadow">
         Garantir Acesso →
@@ -456,7 +431,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="assets/js/quiz-data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
