@@ -1,5 +1,5 @@
 /**
- * Caminhada Fit - Engine do Funil Fiel ao SlimKit
+ * MetabolicFit - Motor do Funil (Baseado na Receita Metabólica & Fiel ao SlimKit)
  */
 
 (function () {
@@ -16,7 +16,7 @@
       currentBmi: 0,
       targetBmi: 0,
       targetDate: "",
-      daysToGoal: 28,
+      daysToGoal: 21,
       kgToLose: 0,
     },
     utmParams: {},
@@ -24,7 +24,6 @@
 
   const el = {
     progressBar: document.getElementById("quiz-progress-bar"),
-    progressText: document.getElementById("quiz-progress-text"),
     backBtn: document.getElementById("quiz-back-btn"),
     stepContainer: document.getElementById("step-container"),
     quizView: document.getElementById("quiz-view"),
@@ -48,7 +47,7 @@
     });
 
     try {
-      sessionStorage.setItem("caminhada_utms", JSON.stringify(state.utmParams));
+      sessionStorage.setItem("metabolic_utms", JSON.stringify(state.utmParams));
     } catch (e) {}
   }
 
@@ -72,8 +71,8 @@
     const totalSteps = QUIZ_DATA.steps.length;
     const step = QUIZ_DATA.steps[index];
 
-    // Atualiza a barra de progresso visual de forma contínua e suave (sem exibir números de etapas)
-    const pct = Math.min(96, Math.max(4, Math.round(((index + 1) / totalSteps) * 100)));
+    // Barra de progresso contínua sem mostrar números de etapas
+    const pct = Math.min(96, Math.max(5, Math.round(((index + 1) / totalSteps) * 100)));
     if (el.progressBar) el.progressBar.style.width = `${pct}%`;
 
     if (el.backBtn) {
@@ -91,10 +90,10 @@
     if (step.type !== "interstitial") {
       html += `
         <div class="mb-6 text-center fade-in-step">
-          <h2 class="text-2xl sm:text-[28px] font-bold text-gray-900 tracking-tight leading-tight">
+          <h2 class="text-2xl sm:text-[28px] font-black text-slate-900 tracking-tight leading-tight">
             ${step.title}
           </h2>
-          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-gray-600 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
+          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-slate-500 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
         </div>
       `;
     }
@@ -125,17 +124,16 @@
       html += `
         <button type="button" data-val="${opt.id}" class="opt-single-btn quiz-card w-full text-left flex items-center justify-between group ${isChecked ? "is-active" : ""}">
           <div class="flex items-center space-x-3.5">
-            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 border border-gray-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
+            ${opt.icon ? `<div class="card-icon-circle">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base text-gray-900 flex items-center gap-2">
+              <div class="font-bold text-base text-slate-900 flex items-center gap-2">
                 ${opt.label}
-                ${opt.badge ? `<span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">${opt.badge}</span>` : ""}
               </div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
-          <div class="radio-indicator">
-            <div class="radio-dot"></div>
+          <div class="radio-box">
+            <div class="radio-inner-dot"></div>
           </div>
         </button>
       `;
@@ -152,21 +150,21 @@
       html += `
         <button type="button" data-val="${opt.id}" class="opt-multi-btn quiz-card w-full text-left flex items-center justify-between group ${isChecked ? "is-active" : ""}">
           <div class="flex items-center space-x-3.5">
-            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 border border-gray-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
+            ${opt.icon ? `<div class="card-icon-circle">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base text-gray-900">${opt.label}</div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              <div class="font-bold text-base text-slate-900">${opt.label}</div>
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
-          <div class="checkbox-indicator">
-            <svg class="w-3.5 h-3.5 text-white ${isChecked ? "opacity-100" : "opacity-0"}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <div class="checkbox-box">
+            <svg class="w-4 h-4 text-white ${isChecked ? "opacity-100" : "opacity-0"}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           </div>
         </button>
       `;
     });
 
     html += `
-      <div class="pt-3">
+      <div class="pt-4">
         <button type="button" id="multi-next-btn" class="btn-action w-full text-base">
           Continuar →
         </button>
@@ -189,10 +187,10 @@
     return `
       <div class="max-w-md mx-auto text-center fade-in-step space-y-5">
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-          ${step.badge || "Revisão Médica"}
+          ${step.badge || "Revisão Científica"}
         </div>
 
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-snug">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
           ${c.headline}
         </h2>
 
@@ -200,10 +198,10 @@
           c.statNumber
             ? `
           <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-100 my-4 text-center">
-            <div class="text-4xl font-extrabold text-blue-700">
+            <div class="text-4xl font-black text-blue-700">
               ${c.statNumber}
             </div>
-            <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-xs mx-auto leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
               ${c.statLabel}
             </p>
           </div>
@@ -211,15 +209,15 @@
             : ""
         }
 
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left sm:text-center">
+        <p class="text-sm sm:text-base text-slate-700 leading-relaxed text-left sm:text-center">
           ${c.bodyText}
         </p>
 
         ${
           c.quote
             ? `
-          <div class="p-4 rounded-xl bg-white border border-gray-200 text-left">
-            <p class="text-sm italic text-gray-700">${c.quote}</p>
+          <div class="p-4 rounded-xl bg-white border border-slate-200 text-left shadow-sm">
+            <p class="text-sm italic text-slate-700">${c.quote}</p>
             <p class="text-xs text-blue-700 font-semibold mt-2">${c.author}</p>
           </div>
         `
@@ -231,7 +229,7 @@
             ? `
           <div class="flex flex-col items-center gap-1 pt-1">
             <div class="flex gap-1">${starsHtml}</div>
-            <p class="text-xs text-gray-600 font-medium">${c.author} · <span class="text-emerald-700 font-semibold">${c.verified}</span></p>
+            <p class="text-xs text-slate-600 font-medium">${c.author} · <span class="text-emerald-700 font-bold">${c.verified}</span></p>
           </div>
         `
             : ""
@@ -250,18 +248,18 @@
     const val = state.answers[step.id] || step.defaultValue || 40;
     return `
       <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
-        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm">
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <div class="flex items-baseline justify-center gap-2">
             <span id="number-display" class="text-6xl font-black text-blue-700">${val}</span>
-            <span class="text-gray-500 text-lg font-medium">${step.unit}</span>
+            <span class="text-slate-500 text-lg font-medium">${step.unit}</span>
           </div>
 
           <div class="mt-8 flex items-center justify-center gap-4">
-            <button type="button" id="num-minus-btn" class="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 text-2xl font-bold text-gray-800 flex items-center justify-center transition-colors">
+            <button type="button" id="num-minus-btn" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
               -
             </button>
-            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-700 h-2 bg-gray-200 rounded-lg cursor-pointer">
-            <button type="button" id="num-plus-btn" class="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 text-2xl font-bold text-gray-800 flex items-center justify-center transition-colors">
+            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-600 h-2 bg-slate-200 rounded-lg cursor-pointer">
+            <button type="button" id="num-plus-btn" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
               +
             </button>
           </div>
@@ -279,13 +277,13 @@
 
     return `
       <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
-        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm">
-          <label class="block text-xs uppercase tracking-wider text-gray-500 mb-3 font-semibold">Altura em Centímetros</label>
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <label class="block text-xs uppercase tracking-wider text-slate-500 mb-3 font-bold">Altura em Centímetros</label>
           <div class="flex items-center justify-center gap-2">
-            <input type="number" id="height-cm" min="130" max="220" value="${heightVal}" class="w-40 py-3 px-4 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 font-bold text-3xl text-center focus:border-blue-700 focus:bg-white focus:outline-none">
-            <span class="text-xl font-bold text-gray-600">cm</span>
+            <input type="number" id="height-cm" min="130" max="220" value="${heightVal}" class="w-40 py-3 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-bold text-3xl text-center focus:border-blue-600 focus:bg-white focus:outline-none">
+            <span class="text-xl font-bold text-slate-600">cm</span>
           </div>
-          <p class="text-xs text-gray-400 mt-3">Exemplo: 168 cm (1 metro e 68 cm)</p>
+          <p class="text-xs text-slate-400 mt-3">Exemplo: 168 cm (1 metro e 68 cm)</p>
         </div>
 
         <button type="button" id="height-next-btn" class="btn-action w-full text-base">
@@ -301,35 +299,35 @@
     return `
       <div class="max-w-md mx-auto text-center space-y-6 fade-in-step">
         <div class="space-y-4">
-          <div class="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm text-left">
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-gray-500 font-semibold">Seu Peso Atual</span>
-              <span class="text-xs text-gray-400">Ponto de Partida</span>
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Seu Peso Atual</span>
+              <span class="text-xs text-slate-400">Ponto de Partida</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 font-bold text-3xl focus:border-blue-700 focus:bg-white focus:outline-none">
-              <span class="text-gray-600 text-xl font-bold w-10">kg</span>
+              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-2.5 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-bold text-3xl focus:border-blue-600 focus:bg-white focus:outline-none">
+              <span class="text-slate-600 text-xl font-bold w-10">kg</span>
             </div>
           </div>
 
           <div class="p-5 rounded-2xl bg-white border-2 border-emerald-500/40 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Seu Peso Desejado</span>
+              <span class="text-xs uppercase tracking-wider text-emerald-700 font-bold">Seu Peso Desejado</span>
               <span class="text-xs text-emerald-600">Meta Saudável</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-50/40 border border-emerald-400 text-gray-900 font-bold text-3xl focus:border-emerald-600 focus:bg-white focus:outline-none">
+              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-50/40 border border-emerald-400 text-slate-900 font-bold text-3xl focus:border-emerald-600 focus:bg-white focus:outline-none">
               <span class="text-emerald-700 text-xl font-bold w-10">kg</span>
             </div>
           </div>
         </div>
 
-        <p class="text-xs text-gray-500 leading-relaxed">
-          🔒 Suas respostas são sigilosas e usadas apenas para montar o cronograma seguro da sua caminhada.
+        <p class="text-xs text-slate-500 leading-relaxed">
+          🔒 Suas respostas são sigilosas e usadas para dosar os compostos da receita personalizada.
         </p>
 
         <button type="button" id="weight-next-btn" class="btn-action w-full text-base bg-emerald-600 hover:bg-emerald-700">
-          Gerar Meu Diagnóstico Completo ⚡
+          Gerar Minha Receita e Diagnóstico ⚡
         </button>
       </div>
     `;
@@ -446,7 +444,7 @@
     state.metrics.currentBmi = (weightKg / (heightM * heightM)).toFixed(1);
     state.metrics.targetBmi = (goalKg / (heightM * heightM)).toFixed(1);
 
-    const weeksNeeded = Math.max(4, Math.round(state.metrics.kgToLose / 0.9));
+    const weeksNeeded = Math.max(3, Math.round(state.metrics.kgToLose / 1.1));
     state.metrics.daysToGoal = weeksNeeded * 7;
 
     const targetDateObj = new Date();
@@ -471,10 +469,10 @@
     const loaderCircle = document.getElementById("loader-circle-progress");
 
     const stages = [
-      { pct: 25, text: "Analisando seu perfil metabólico e faixa etária..." },
-      { pct: 55, text: "Calculando a frequência cardíaca ideal na Zona 2..." },
-      { pct: 82, text: "Ajustando cadência e inclinação para proteger os joelhos..." },
-      { pct: 100, text: "Finalizando seu plano personalizado de 28 dias!" },
+      { pct: 28, text: "Analisando seu perfil metabólico e peso meta..." },
+      { pct: 58, text: "Calculando a concentração dos ingredientes da receita..." },
+      { pct: 84, text: "Definindo o horário de ouro para ingestão matinal..." },
+      { pct: 100, text: "Finalizando seu Protocolo Personalizado da Receita!" },
     ];
 
     let currentStage = 0;
@@ -531,7 +529,7 @@
         if (email && email.includes("@")) {
           state.answers.email = email;
           try {
-            localStorage.setItem("caminhada_lead", JSON.stringify({ email, ...state.answers }));
+            localStorage.setItem("metabolic_lead", JSON.stringify({ email, ...state.answers }));
           } catch (err) {}
           showOfferScreen();
         }

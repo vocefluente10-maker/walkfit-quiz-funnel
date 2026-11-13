@@ -1,16 +1,16 @@
-/* Caminhada Fit - Padrão Fiel ao SlimKit / Noom */
+/* MetabolicFit - Estilo Idêntico à Imagem do Usuário e Fiel ao SlimKit */
 
 :root {
   --bg-app: #f9fafb;
   --bg-card: #ffffff;
-  --text-title: #111827;
-  --text-body: #4b5563;
-  --text-muted: #6b7280;
-  --brand-blue: #1d4ed8;
-  --brand-blue-hover: #1e40af;
-  --border-card: #e5e7eb;
-  --border-selected: #1d4ed8;
-  --bg-selected: #f0f7ff;
+  --text-title: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --brand-blue: #2563eb;
+  --brand-blue-hover: #1d4ed8;
+  --border-card: #e2e8f0;
+  --border-selected: #2563eb;
+  --bg-selected: #eff6ff;
 }
 
 body {
@@ -21,10 +21,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Barra de progresso fina e minimalista igual ao SlimKit */
+/* Barra de progresso contínua e fina sem contador de etapas */
 .top-progress-bar {
   height: 4px;
-  background-color: #e5e7eb;
+  background-color: #e2e8f0;
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -33,22 +33,21 @@ body {
   background-color: var(--brand-blue);
   height: 100%;
   border-radius: 9999px;
-  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Cards de Opção Idênticos ao SlimKit */
+/* Card de Opção Idêntico à Imagem do Usuário */
 .quiz-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 14px;
-  padding: 16px 18px;
-  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.08s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px 20px;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
 
 .quiz-card:hover {
   border-color: #cbd5e1;
-  background-color: #ffffff;
 }
 
 .quiz-card:active {
@@ -57,19 +56,86 @@ body {
 
 .quiz-card.is-active {
   border-color: var(--border-selected);
-  background-color: var(--bg-selected);
-  box-shadow: 0 0 0 1px var(--border-selected);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1.5px var(--border-selected), 0 4px 12px rgba(37, 99, 235, 0.08);
 }
 
-/* Botão Primário Sólido */
+/* Ícone circular cinza claro à esquerda (como na imagem do usuário) */
+.card-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.quiz-card.is-active .card-icon-circle {
+  background-color: #dbeafe;
+}
+
+/* Checkbox estilizado idêntico à imagem enviada */
+.checkbox-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 1.8px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.quiz-card.is-active .checkbox-box {
+  border-color: var(--brand-blue);
+  background-color: var(--brand-blue);
+}
+
+/* Radio button discreto */
+.radio-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  border: 1.8px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.quiz-card.is-active .radio-box {
+  border-color: var(--brand-blue);
+  background-color: var(--brand-blue);
+}
+
+.radio-inner-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.quiz-card.is-active .radio-inner-dot {
+  opacity: 1;
+}
+
+/* Botão de ação primário */
 .btn-action {
   background-color: var(--brand-blue);
   color: #ffffff;
-  font-weight: 600;
-  border-radius: 12px;
-  padding: 15px 20px;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 16px 24px;
   transition: background-color 0.15s ease, transform 0.08s ease;
-  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .btn-action:hover {
@@ -80,57 +146,8 @@ body {
   transform: scale(0.99);
 }
 
-/* Indicador de Rádio Discreto */
-.radio-indicator {
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  border: 1.5px solid #d1d5db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-
-.quiz-card.is-active .radio-indicator {
-  border-color: var(--brand-blue);
-  background-color: var(--brand-blue);
-}
-
-.radio-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 9999px;
-  background-color: #ffffff;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.quiz-card.is-active .radio-dot {
-  opacity: 1;
-}
-
-/* Checkbox para múltipla escolha */
-.checkbox-indicator {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 1.5px solid #d1d5db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-
-.quiz-card.is-active .checkbox-indicator {
-  border-color: var(--brand-blue);
-  background-color: var(--brand-blue);
-}
-
-/* Efeito de transição suave de tela */
-@keyframes fadeInSlide {
+/* Animação suave entre telas */
+@keyframes stepFade {
   from {
     opacity: 0;
     transform: translateY(4px);
@@ -142,7 +159,7 @@ body {
 }
 
 .fade-in-step {
-  animation: fadeInSlide 0.2s ease-out forwards;
+  animation: stepFade 0.2s ease-out forwards;
 }
 
 /* Círculo do carregador */
@@ -155,7 +172,7 @@ body {
 
 .circle-bg {
   fill: none;
-  stroke: #e5e7eb;
+  stroke: #e2e8f0;
   stroke-width: 3.5;
 }
 
