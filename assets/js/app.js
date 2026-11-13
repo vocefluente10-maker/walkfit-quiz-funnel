@@ -72,9 +72,9 @@
     const totalSteps = QUIZ_DATA.steps.length;
     const step = QUIZ_DATA.steps[index];
 
-    const pct = Math.round(((index + 1) / totalSteps) * 100);
+    // Atualiza a barra de progresso visual de forma contínua e suave (sem exibir números de etapas)
+    const pct = Math.min(96, Math.max(4, Math.round(((index + 1) / totalSteps) * 100)));
     if (el.progressBar) el.progressBar.style.width = `${pct}%`;
-    if (el.progressText) el.progressText.textContent = `Etapa ${index + 1} de ${totalSteps}`;
 
     if (el.backBtn) {
       if (index === 0) {
