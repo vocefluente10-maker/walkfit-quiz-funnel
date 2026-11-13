@@ -1,30 +1,30 @@
 /**
- * WalkFit Pro Funnel Application Engine
- * Highly inspired by SlimKit Treadmill / Walking Quiz
+ * Caminhada Fit - Motor do Funil (Estilo SlimKit / Noom)
+ * Interface Humanizada e Fluida em Português
  */
 
 (function () {
   "use strict";
 
-  // State
+  // Estado do Funil
   const state = {
     currentStepIndex: 0,
     answers: {},
     units: {
-      height: "imperial", // 'imperial' (ft/in) or 'metric' (cm)
-      weight: "imperial", // 'imperial' (lbs) or 'metric' (kg)
+      height: "metric", // 'metric' (cm) padrão
+      weight: "metric", // 'metric' (kg) padrão
     },
     metrics: {
       currentBmi: 0,
       targetBmi: 0,
       targetDate: "",
       daysToGoal: 28,
-      lbsToLose: 0,
+      kgToLose: 0,
     },
     utmParams: {},
   };
 
-  // Cache DOM elements
+  // Elementos da DOM
   const el = {
     progressBar: document.getElementById("quiz-progress-bar"),
     progressText: document.getElementById("quiz-progress-text"),
@@ -37,7 +37,7 @@
     offerView: document.getElementById("offer-view"),
   };
 
-  // 1. Initialize UTM Tracking
+  // 1. Rastreamento e retenção de UTMs
   function initUtmTracking() {
     const params = new URLSearchParams(window.location.search);
     const utms = [
@@ -49,8 +49,7 @@
       "adset_id",
       "c_id",
       "ad_id",
-      "fbp",
-      "fbc",
+      "fbpxls",
     ];
 
     utms.forEach((key) => {
@@ -59,11 +58,12 @@
       }
     });
 
-    // Save to sessionStorage
-    sessionStorage.setItem("walkfit_utms", JSON.stringify(state.utmParams));
+    try {
+      sessionStorage.setItem("caminhada_utms", JSON.stringify(state.utmParams));
+    } catch (e) {}
   }
 
-  // 2. Build Checkout Link with UTMs
+  // 2. Monta o link do checkout com os parâmetros
   function getCheckoutUrl() {
     const base = QUIZ_DATA.config.checkoutUrl;
     try {
@@ -71,7 +71,6 @@
       Object.keys(state.utmParams).forEach((k) => {
         url.searchParams.set(k, state.utmParams[k]);
       });
-      // Append user info if available
       if (state.answers.email) {
         url.searchParams.set("email", state.answers.email);
       }
@@ -81,17 +80,17 @@
     }
   }
 
-  // 3. Render Quiz Step
+  // 3. Renderiza a etapa atual do quiz
   function renderStep(index) {
     const totalSteps = QUIZ_DATA.steps.length;
     const step = QUIZ_DATA.steps[index];
 
-    // Update Progress
+    // Atualiza Barra de Progresso
     const pct = Math.round(((index + 1) / totalSteps) * 100);
     if (el.progressBar) el.progressBar.style.width = `${pct}%`;
-    if (el.progressText) el.progressText.textContent = `${pct}% Completed`;
+    if (el.progressText) el.progressText.textContent = `${pct}% Concluído`;
 
-    // Back button visibility
+    // Botão Voltar
     if (el.backBtn) {
       if (index === 0) {
         el.backBtn.classList.add("opacity-0", "pointer-events-none");
@@ -100,28 +99,26 @@
       }
     }
 
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Build Step HTML
     let html = "";
 
-    // Standard Header for questions
+    // Cabeçalho da Pergunta
     if (step.type !== "interstitial") {
       html += `
-        <div class="mb-6 text-center animate-fade-in">
-          <span class="inline-block px-3 py-1 mb-2 text-xs font-semibold tracking-wider uppercase text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-full">
-            Question ${index + 1} of ${totalSteps}
+        <div class="mb-6 text-center animate-step">
+          <span class="inline-block px-3 py-1 mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 rounded-full">
+            Etapa ${index + 1} de ${totalSteps}
           </span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-snug">
             ${step.title}
           </h2>
-          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-gray-400 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
+          ${step.subtitle ? `<p class="mt-2 text-sm sm:text-base text-slate-600 max-w-md mx-auto leading-relaxed">${step.subtitle}</p>` : ""}
         </div>
       `;
     }
 
-    // Body based on type
+    // Corpo conforme o tipo
     if (step.type === "single") {
       html += renderSingleStep(step);
     } else if (step.type === "multiple") {
@@ -140,30 +137,26 @@
     bindStepEvents(step);
   }
 
-  // Sub-renderers
+  // Opção Única (Avanço Imediato ao Clicar)
   function renderSingleStep(step) {
     const selected = state.answers[step.id];
-    let html = '<div class="space-y-3 max-w-lg mx-auto animate-fade-in">';
+    let html = '<div class="space-y-3 max-w-lg mx-auto animate-step">';
     step.options.forEach((opt) => {
       const isChecked = selected === opt.id;
       html += `
-        <button type="button" data-val="${opt.id}" class="opt-single-btn w-full text-left p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${
-        isChecked
-          ? "bg-blue-600/20 border-blue-500 text-white shadow-lg shadow-blue-500/10"
-          : "bg-gray-900/70 border-gray-800 text-gray-200 hover:border-gray-700 hover:bg-gray-850"
-      }">
+        <button type="button" data-val="${opt.id}" class="opt-single-btn opt-card w-full text-left p-4 sm:p-5 flex items-center justify-between group ${isChecked ? "is-selected" : ""}">
           <div class="flex items-center space-x-4">
-            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800/80 group-hover:scale-105 transition-transform">${opt.icon}</div>` : ""}
+            ${opt.icon ? `<div class="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base sm:text-lg flex items-center gap-2">
+              <div class="font-semibold text-base sm:text-lg text-slate-900 flex items-center gap-2">
                 ${opt.label}
-                ${opt.badge ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">${opt.badge}</span>` : ""}
+                ${opt.badge ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${opt.badge}</span>` : ""}
               </div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-400 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
           <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            isChecked ? "border-blue-500 bg-blue-500" : "border-gray-600 group-hover:border-gray-500"
+            isChecked ? "border-blue-600 bg-blue-600" : "border-slate-300 group-hover:border-slate-400"
           }">
             <div class="w-2 h-2 rounded-full bg-white ${isChecked ? "opacity-100" : "opacity-0"}"></div>
           </div>
@@ -174,26 +167,23 @@
     return html;
   }
 
+  // Múltipla Escolha
   function renderMultipleStep(step) {
     const selectedArr = state.answers[step.id] || [];
-    let html = '<div class="space-y-3 max-w-lg mx-auto animate-fade-in">';
+    let html = '<div class="space-y-3 max-w-lg mx-auto animate-step">';
     step.options.forEach((opt) => {
       const isChecked = selectedArr.includes(opt.id);
       html += `
-        <button type="button" data-val="${opt.id}" class="opt-multi-btn w-full text-left p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${
-        isChecked
-          ? "bg-blue-600/20 border-blue-500 text-white shadow-lg shadow-blue-500/10"
-          : "bg-gray-900/70 border-gray-800 text-gray-200 hover:border-gray-700 hover:bg-gray-850"
-      }">
+        <button type="button" data-val="${opt.id}" class="opt-multi-btn opt-card w-full text-left p-4 sm:p-5 flex items-center justify-between group ${isChecked ? "is-selected" : ""}">
           <div class="flex items-center space-x-4">
-            ${opt.icon ? `<div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800/80 group-hover:scale-105 transition-transform">${opt.icon}</div>` : ""}
+            ${opt.icon ? `<div class="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 transition-colors">${opt.icon}</div>` : ""}
             <div>
-              <div class="font-semibold text-base sm:text-lg">${opt.label}</div>
-              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-gray-400 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
+              <div class="font-semibold text-base sm:text-lg text-slate-900">${opt.label}</div>
+              ${opt.sublabel ? `<p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">${opt.sublabel}</p>` : ""}
             </div>
           </div>
           <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            isChecked ? "border-blue-500 bg-blue-500" : "border-gray-600 group-hover:border-gray-500"
+            isChecked ? "border-blue-600 bg-blue-600" : "border-slate-300 group-hover:border-slate-400"
           }">
             <svg class="w-4 h-4 text-white ${isChecked ? "opacity-100" : "opacity-0"}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
           </div>
@@ -203,14 +193,15 @@
 
     html += `
       <div class="pt-4">
-        <button type="button" id="multi-next-btn" class="w-full py-4 px-6 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/30 transition-all transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
-          Continue →
+        <button type="button" id="multi-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+          Continuar →
         </button>
       </div>
     </div>`;
     return html;
   }
 
+  // Tela Intersticial Educativa (Estilo SlimKit)
   function renderInterstitialStep(step) {
     const c = step.content;
     let starsHtml = "";
@@ -223,24 +214,24 @@
     }
 
     return `
-      <div class="max-w-md mx-auto text-center animate-fade-in space-y-6">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+      <div class="max-w-md mx-auto text-center animate-step space-y-6">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          ${step.badge || "Proven Result"}
+          ${step.badge || "Comprovado por Especialistas"}
         </div>
 
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
           ${c.headline}
         </h2>
 
         ${
           c.statNumber
             ? `
-          <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border border-blue-500/20 my-4 text-center">
-            <div class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+          <div class="p-6 rounded-2xl bg-blue-50 border border-blue-100 my-4 text-center">
+            <div class="text-4xl sm:text-5xl font-black text-blue-700">
               ${c.statNumber}
             </div>
-            <p class="text-xs sm:text-sm text-gray-300 mt-1 max-w-xs mx-auto leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
               ${c.statLabel}
             </p>
           </div>
@@ -248,16 +239,16 @@
             : ""
         }
 
-        <p class="text-sm sm:text-base text-gray-300 leading-relaxed text-left sm:text-center">
+        <p class="text-sm sm:text-base text-slate-700 leading-relaxed text-left sm:text-center">
           ${c.bodyText}
         </p>
 
         ${
           c.quote
             ? `
-          <div class="p-4 rounded-xl bg-gray-900/70 border border-gray-800 text-left">
-            <p class="text-sm italic text-gray-300">${c.quote}</p>
-            <p class="text-xs text-blue-400 font-semibold mt-2">${c.author}</p>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-left">
+            <p class="text-sm italic text-slate-700">${c.quote}</p>
+            <p class="text-xs text-blue-700 font-semibold mt-2">${c.author}</p>
           </div>
         `
             : ""
@@ -268,177 +259,128 @@
             ? `
           <div class="flex flex-col items-center gap-1">
             <div class="flex gap-1">${starsHtml}</div>
-            <p class="text-xs text-gray-400 font-medium">${c.author} · <span class="text-emerald-400">${c.verified}</span></p>
+            <p class="text-xs text-slate-600 font-medium">${c.author} · <span class="text-emerald-700 font-bold">${c.verified}</span></p>
           </div>
         `
             : ""
         }
 
         <div class="pt-2">
-          <button type="button" id="interstitial-next-btn" class="w-full py-4 px-6 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/30 transition-all transform active:scale-95">
-            ${step.buttonText || "Continue →"}
+          <button type="button" id="interstitial-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+            ${step.buttonText || "Continuar →"}
           </button>
         </div>
       </div>
     `;
   }
 
+  // Idade
   function renderNumberStep(step) {
-    const val = state.answers[step.id] || step.defaultValue || 38;
+    const val = state.answers[step.id] || step.defaultValue || 40;
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-fade-in">
-        <div class="p-8 rounded-3xl bg-gray-900/80 border border-gray-800 shadow-2xl">
+      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <div class="flex items-baseline justify-center gap-2">
-            <span id="number-display" class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">${val}</span>
-            <span class="text-gray-400 text-lg font-medium">${step.unit}</span>
+            <span id="number-display" class="text-6xl font-black text-blue-600">${val}</span>
+            <span class="text-slate-500 text-lg font-medium">${step.unit}</span>
           </div>
 
           <div class="mt-8 flex items-center justify-center gap-4">
-            <button type="button" id="num-minus-btn" class="w-14 h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 active:scale-90 text-2xl font-bold text-white flex items-center justify-center transition-all border border-gray-700">
+            <button type="button" id="num-minus-btn" class="w-13 h-13 w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
               -
             </button>
-            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-500 h-2 bg-gray-800 rounded-lg cursor-pointer">
-            <button type="button" id="num-plus-btn" class="w-14 h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 active:scale-90 text-2xl font-bold text-white flex items-center justify-center transition-all border border-gray-700">
+            <input type="range" id="num-range" min="${step.min}" max="${step.max}" value="${val}" class="w-full accent-blue-600 h-2 bg-slate-200 rounded-lg cursor-pointer">
+            <button type="button" id="num-plus-btn" class="w-13 h-13 w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-2xl font-bold text-slate-800 flex items-center justify-center transition-colors">
               +
             </button>
           </div>
         </div>
 
-        <button type="button" id="number-next-btn" class="w-full py-4 px-6 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/30 transition-all transform active:scale-95">
-          Continue →
+        <button type="button" id="number-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+          Continuar →
         </button>
       </div>
     `;
   }
 
+  // Altura
   function renderHeightStep(step) {
-    const isImperial = state.units.height === "imperial";
-    const heightData = state.answers.height || (isImperial ? { ft: 5, in: 6 } : { cm: 168 });
+    const heightVal = state.answers.height?.cm || 168;
 
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-fade-in">
-        <!-- Units Toggle -->
-        <div class="inline-flex p-1 bg-gray-900 rounded-xl border border-gray-800">
-          <button type="button" id="toggle-ft" class="px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            isImperial ? "bg-blue-600 text-white shadow-md" : "text-gray-400 hover:text-white"
-          }">FT / IN</button>
-          <button type="button" id="toggle-cm" class="px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            !isImperial ? "bg-blue-600 text-white shadow-md" : "text-gray-400 hover:text-white"
-          }">CM</button>
+      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <label class="block text-xs uppercase tracking-wider text-slate-500 mb-3 font-bold">Altura em Centímetros</label>
+          <div class="flex items-center justify-center gap-2">
+            <input type="number" id="height-cm" min="130" max="220" value="${heightVal}" class="w-40 py-3 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-extrabold text-3xl text-center focus:border-blue-600 focus:bg-white focus:outline-none">
+            <span class="text-xl font-bold text-slate-600">cm</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-3">Exemplo: 168 cm (1 metro e 68 cm)</p>
         </div>
 
-        <div class="p-8 rounded-3xl bg-gray-900/80 border border-gray-800 shadow-2xl">
-          ${
-            isImperial
-              ? `
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Feet</label>
-                <select id="height-ft" class="w-full py-3.5 px-4 rounded-xl bg-gray-800 border border-gray-700 text-white font-bold text-xl text-center focus:border-blue-500 focus:outline-none">
-                  ${[4, 5, 6, 7]
-                    .map(
-                      (f) =>
-                        `<option value="${f}" ${heightData.ft == f ? "selected" : ""}>${f} ft</option>`
-                    )
-                    .join("")}
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Inches</label>
-                <select id="height-in" class="w-full py-3.5 px-4 rounded-xl bg-gray-800 border border-gray-700 text-white font-bold text-xl text-center focus:border-blue-500 focus:outline-none">
-                  ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-                    .map(
-                      (i) =>
-                        `<option value="${i}" ${heightData.in == i ? "selected" : ""}>${i} in</option>`
-                    )
-                    .join("")}
-                </select>
-              </div>
-            </div>
-          `
-              : `
-            <div>
-              <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Centimeters</label>
-              <input type="number" id="height-cm" min="120" max="230" value="${heightData.cm || 168}" class="w-full py-3.5 px-4 rounded-xl bg-gray-800 border border-gray-700 text-white font-bold text-2xl text-center focus:border-blue-500 focus:outline-none">
-            </div>
-          `
-          }
-        </div>
-
-        <button type="button" id="height-next-btn" class="w-full py-4 px-6 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/30 transition-all transform active:scale-95">
-          Continue →
+        <button type="button" id="height-next-btn" class="btn-primary w-full py-4 px-6 text-lg">
+          Continuar →
         </button>
       </div>
     `;
   }
 
+  // Peso Atual e Peso Meta
   function renderWeightDualStep(step) {
-    const isImperial = state.units.weight === "imperial";
-    const weightData = state.answers.weights || (isImperial ? { current: 178, goal: 142 } : { current: 81, goal: 64 });
-    const unitLabel = isImperial ? "lbs" : "kg";
+    const weightData = state.answers.weights || { current: 78, goal: 62 };
 
     return `
-      <div class="max-w-md mx-auto text-center space-y-6 animate-fade-in">
-        <!-- Units Toggle -->
-        <div class="inline-flex p-1 bg-gray-900 rounded-xl border border-gray-800">
-          <button type="button" id="toggle-lbs" class="px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            isImperial ? "bg-blue-600 text-white shadow-md" : "text-gray-400 hover:text-white"
-          }">LBS (US)</button>
-          <button type="button" id="toggle-kg" class="px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            !isImperial ? "bg-blue-600 text-white shadow-md" : "text-gray-400 hover:text-white"
-          }">KG (Metric)</button>
-        </div>
-
+      <div class="max-w-md mx-auto text-center space-y-6 animate-step">
         <div class="space-y-4">
-          <!-- Current Weight -->
-          <div class="p-6 rounded-3xl bg-gray-900/80 border border-gray-800 shadow-2xl text-left">
+          <!-- Peso Atual -->
+          <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-gray-400 font-bold">Current Weight</span>
-              <span class="text-xs text-blue-400 font-medium">Starting Point</span>
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Seu Peso Atual</span>
+              <span class="text-xs text-slate-400 font-medium">Ponto de Partida</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-3 px-4 rounded-xl bg-gray-800 border border-gray-700 text-white font-extrabold text-3xl focus:border-blue-500 focus:outline-none">
-              <span class="text-gray-400 text-lg font-bold w-12">${unitLabel}</span>
+              <input type="number" id="weight-current" value="${weightData.current}" class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-extrabold text-3xl focus:border-blue-600 focus:bg-white focus:outline-none">
+              <span class="text-slate-600 text-xl font-bold w-10">kg</span>
             </div>
           </div>
 
-          <!-- Goal Weight -->
-          <div class="p-6 rounded-3xl bg-gray-900/80 border border-blue-500/30 shadow-2xl text-left relative overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+          <!-- Peso Meta -->
+          <div class="p-6 rounded-2xl bg-white border-2 border-emerald-500/50 shadow-sm text-left">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold">Goal Weight</span>
-              <span class="text-xs text-emerald-400/80 font-medium">Target Transformation</span>
+              <span class="text-xs uppercase tracking-wider text-emerald-700 font-bold">Seu Peso Desejado</span>
+              <span class="text-xs text-emerald-600 font-medium">Meta de Saúde</span>
             </div>
             <div class="flex items-center gap-3">
-              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-3 px-4 rounded-xl bg-gray-800 border border-emerald-500/40 text-white font-extrabold text-3xl focus:border-emerald-400 focus:outline-none">
-              <span class="text-emerald-400 text-lg font-bold w-12">${unitLabel}</span>
+              <input type="number" id="weight-goal" value="${weightData.goal}" class="w-full py-3 px-4 rounded-xl bg-emerald-50/50 border border-emerald-400 text-slate-900 font-extrabold text-3xl focus:border-emerald-600 focus:bg-white focus:outline-none">
+              <span class="text-emerald-700 text-xl font-bold w-10">kg</span>
             </div>
           </div>
         </div>
 
-        <p class="text-xs text-gray-400 leading-relaxed">
-          🔒 Your private health metrics are strictly kept confidential and used solely to formulate your custom 28-day walking schedule.
+        <p class="text-xs text-slate-500 leading-relaxed">
+          🔒 Suas respostas são sigilosas e usadas apenas para montar o cronograma seguro da sua caminhada.
         </p>
 
-        <button type="button" id="weight-next-btn" class="w-full py-4 px-6 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 shadow-xl shadow-emerald-500/20 transition-all transform active:scale-95">
-          Generate My Plan Now ⚡
+        <button type="button" id="weight-next-btn" class="btn-primary w-full py-4 px-6 text-lg bg-emerald-600 hover:bg-emerald-700">
+          Gerar Meu Diagnóstico Completo ⚡
         </button>
       </div>
     `;
   }
 
-  // Bind Events for Current Step
+  // Eventos de cada tela
   function bindStepEvents(step) {
     if (step.type === "single") {
       document.querySelectorAll(".opt-single-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const val = btn.getAttribute("data-val");
           state.answers[step.id] = val;
-          // Visual click feedback then advance
-          btn.classList.add("scale-[0.98]", "bg-blue-600/30");
+          // Feedback de clique suave
+          document.querySelectorAll(".opt-single-btn").forEach((b) => b.classList.remove("is-selected"));
+          btn.classList.add("is-selected");
           setTimeout(() => {
             goToNextStep();
-          }, 180);
+          }, 160);
         });
       });
     } else if (step.type === "multiple") {
@@ -469,9 +411,7 @@
     } else if (step.type === "interstitial") {
       const nextBtn = document.getElementById("interstitial-next-btn");
       if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
-          goToNextStep();
-        });
+        nextBtn.addEventListener("click", goToNextStep);
       }
     } else if (step.type === "number") {
       const display = document.getElementById("number-display");
@@ -481,7 +421,6 @@
       const nextBtn = document.getElementById("number-next-btn");
 
       let currentVal = parseInt(range.value, 10);
-
       const updateVal = (v) => {
         currentVal = Math.max(step.min, Math.min(step.max, v));
         range.value = currentVal;
@@ -497,54 +436,23 @@
         goToNextStep();
       });
     } else if (step.type === "height") {
-      const toggleFt = document.getElementById("toggle-ft");
-      const toggleCm = document.getElementById("toggle-cm");
       const nextBtn = document.getElementById("height-next-btn");
-
-      toggleFt.addEventListener("click", () => {
-        state.units.height = "imperial";
-        renderStep(state.currentStepIndex);
-      });
-      toggleCm.addEventListener("click", () => {
-        state.units.height = "metric";
-        renderStep(state.currentStepIndex);
-      });
-
       nextBtn.addEventListener("click", () => {
-        if (state.units.height === "imperial") {
-          const ft = parseInt(document.getElementById("height-ft").value, 10);
-          const inVal = parseInt(document.getElementById("height-in").value, 10);
-          state.answers.height = { ft, in: inVal };
-        } else {
-          const cm = parseInt(document.getElementById("height-cm").value, 10);
-          state.answers.height = { cm };
-        }
+        const cm = parseInt(document.getElementById("height-cm").value, 10) || 168;
+        state.answers.height = { cm };
         goToNextStep();
       });
     } else if (step.type === "weight_dual") {
-      const toggleLbs = document.getElementById("toggle-lbs");
-      const toggleKg = document.getElementById("toggle-kg");
       const nextBtn = document.getElementById("weight-next-btn");
-
-      toggleLbs.addEventListener("click", () => {
-        state.units.weight = "imperial";
-        renderStep(state.currentStepIndex);
-      });
-      toggleKg.addEventListener("click", () => {
-        state.units.weight = "metric";
-        renderStep(state.currentStepIndex);
-      });
-
       nextBtn.addEventListener("click", () => {
-        const cur = parseFloat(document.getElementById("weight-current").value) || 165;
-        const goal = parseFloat(document.getElementById("weight-goal").value) || 135;
+        const cur = parseFloat(document.getElementById("weight-current").value) || 78;
+        const goal = parseFloat(document.getElementById("weight-goal").value) || 62;
         state.answers.weights = { current: cur, goal: goal };
         finishQuizAndStartLoader();
       });
     }
   }
 
-  // Navigation Logic
   function goToNextStep() {
     if (state.currentStepIndex < QUIZ_DATA.steps.length - 1) {
       state.currentStepIndex++;
@@ -561,63 +469,37 @@
     }
   }
 
-  // Calculate Metrics (BMI, Timeline, Deficit)
+  // Cálculos de IMC e Projeção
   function calculateMetrics() {
-    let weightKg = 70;
-    let goalKg = 60;
-    let heightM = 1.68;
+    const w = state.answers.weights || { current: 78, goal: 62 };
+    const h = state.answers.height || { cm: 168 };
 
-    const w = state.answers.weights || { current: 175, goal: 140 };
-    if (state.units.weight === "imperial") {
-      weightKg = w.current * 0.453592;
-      goalKg = w.goal * 0.453592;
-      state.metrics.lbsToLose = Math.max(5, Math.round(w.current - w.goal));
-    } else {
-      weightKg = w.current;
-      goalKg = w.goal;
-      state.metrics.lbsToLose = Math.max(5, Math.round((w.current - w.goal) * 2.20462));
-    }
+    const heightM = h.cm / 100;
+    const weightKg = w.current;
+    const goalKg = w.goal;
 
-    const h = state.answers.height || { ft: 5, in: 6 };
-    if (state.units.height === "imperial") {
-      const totalInches = (h.ft || 5) * 12 + (h.in || 6);
-      heightM = totalInches * 0.0254;
-    } else {
-      heightM = (h.cm || 168) / 100;
-    }
-
+    state.metrics.kgToLose = Math.max(2, Math.round(weightKg - goalKg));
     state.metrics.currentBmi = (weightKg / (heightM * heightM)).toFixed(1);
     state.metrics.targetBmi = (goalKg / (heightM * heightM)).toFixed(1);
 
-    // Calculate Target Date (approx 1.7 lbs per week on structured walking + low-cortisol habit)
-    const weeksNeeded = Math.max(4, Math.round(state.metrics.lbsToLose / 1.7));
+    // Média saudável de 0.8kg a 1kg por semana com caminhada em Zona 2
+    const weeksNeeded = Math.max(4, Math.round(state.metrics.kgToLose / 0.9));
     state.metrics.daysToGoal = weeksNeeded * 7;
 
     const targetDateObj = new Date();
     targetDateObj.setDate(targetDateObj.getDate() + state.metrics.daysToGoal);
 
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+    const meses = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
-    state.metrics.targetDate = `${monthNames[targetDateObj.getMonth()]} ${targetDateObj.getDate()}, ${targetDateObj.getFullYear()}`;
+    state.metrics.targetDate = `${targetDateObj.getDate()} de ${meses[targetDateObj.getMonth()]} de ${targetDateObj.getFullYear()}`;
   }
 
-  // 4. Loader & Algorithmic Calculation Screen
+  // 4. Tela de Carregamento e Análise Algorítmica (SlimKit)
   function finishQuizAndStartLoader() {
     calculateMetrics();
 
-    // Hide Quiz, Show Loader
     el.quizView.classList.add("hidden");
     el.loaderView.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -627,10 +509,10 @@
     const loaderCircle = document.getElementById("loader-circle-progress");
 
     const stages = [
-      { pct: 24, text: "Analyzing your metabolic profile & age group..." },
-      { pct: 52, text: "Calculating optimal Zone-2 incline intervals..." },
-      { pct: 78, text: "Tailoring 28-day schedule to protect joints..." },
-      { pct: 100, text: "Finalizing your custom Walking Blueprint!" },
+      { pct: 28, text: "Analisando seu perfil metabólico e faixa etária..." },
+      { pct: 58, text: "Calculando a frequência cardíaca ideal na Zona 2..." },
+      { pct: 84, text: "Ajustando cadência e inclinação para proteger os joelhos..." },
+      { pct: 100, text: "Finalizando seu plano personalizado de 28 dias!" },
     ];
 
     let currentStage = 0;
@@ -648,38 +530,32 @@
         clearInterval(interval);
         setTimeout(() => {
           showResultsScreen();
-        }, 600);
+        }, 500);
       }
-    }, 1200);
+    }, 1100);
   }
 
-  // 5. Results & Diagnostic Dashboard
+  // 5. Dashboard de Resultados Pessoais
   function showResultsScreen() {
     el.loaderView.classList.add("hidden");
     el.resultsView.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Populate Dynamic Result Values
-    const goalWeightDisplay = state.answers.weights
-      ? `${state.answers.weights.goal} ${state.units.weight === "imperial" ? "lbs" : "kg"}`
-      : "Ideal Weight";
+    const goalWeightDisplay = state.answers.weights ? `${state.answers.weights.goal} kg` : "62 kg";
 
     document.querySelectorAll(".res-target-date").forEach((n) => (n.textContent = state.metrics.targetDate));
     document.querySelectorAll(".res-current-bmi").forEach((n) => (n.textContent = state.metrics.currentBmi));
     document.querySelectorAll(".res-target-bmi").forEach((n) => (n.textContent = state.metrics.targetBmi));
     document.querySelectorAll(".res-goal-weight").forEach((n) => (n.textContent = goalWeightDisplay));
-    document.querySelectorAll(".res-lbs-loss").forEach((n) => (n.textContent = `${state.metrics.lbsToLose} lbs`));
+    document.querySelectorAll(".res-kg-loss").forEach((n) => (n.textContent = `${state.metrics.kgToLose} kg`));
 
-    // Bind Proceed to Email / Offer
     const proceedBtn = document.getElementById("results-proceed-btn");
     if (proceedBtn) {
-      proceedBtn.addEventListener("click", () => {
-        showEmailCaptureScreen();
-      });
+      proceedBtn.addEventListener("click", showEmailCaptureScreen);
     }
   }
 
-  // 6. Email Lead Capture Screen
+  // 6. Captura de E-mail
   function showEmailCaptureScreen() {
     el.resultsView.classList.add("hidden");
     el.emailView.classList.remove("hidden");
@@ -694,49 +570,34 @@
         const email = emailInput.value.trim();
         if (email && email.includes("@")) {
           state.answers.email = email;
-          // Store lead
           try {
-            localStorage.setItem("walkfit_lead", JSON.stringify({ email, ...state.answers }));
+            localStorage.setItem("caminhada_lead", JSON.stringify({ email, ...state.answers }));
           } catch (err) {}
-
           showOfferScreen();
         }
       });
     }
   }
 
-  // 7. Offer & High-Converting Sales Page
+  // 7. Página de Oferta do Ebook
   function showOfferScreen() {
     el.emailView.classList.add("hidden");
     el.offerView.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Show sticky mobile bar
     const stickyBar = document.getElementById("sticky-offer-bar");
     if (stickyBar) {
       stickyBar.classList.remove("hidden");
     }
 
-    // Initialize 15-Minute Countdown Timer
     startCountdownTimer(15 * 60);
 
-    // Setup Dynamic Checkout Links
     const checkoutUrl = getCheckoutUrl();
     document.querySelectorAll(".cta-checkout-btn").forEach((btn) => {
       btn.href = checkoutUrl;
-      btn.addEventListener("click", () => {
-        // Pixel track InitiateCheckout if present
-        if (typeof window.fbq === "function") {
-          window.fbq("track", "InitiateCheckout", {
-            value: 19.0,
-            currency: "USD",
-            content_name: QUIZ_DATA.config.productTitle,
-          });
-        }
-      });
     });
 
-    // Setup FAQ Accordions
+    // Accordion do FAQ
     document.querySelectorAll(".faq-toggle").forEach((btn) => {
       btn.addEventListener("click", () => {
         const content = btn.nextElementSibling;
@@ -754,7 +615,7 @@
     });
   }
 
-  // Countdown Timer
+  // Timer de 15 Minutos
   function startCountdownTimer(seconds) {
     let timeLeft = seconds;
     const timerDisplays = document.querySelectorAll(".countdown-clock");
@@ -774,7 +635,7 @@
     }, 1000);
   }
 
-  // 8. Bootstrapping
+  // Inicialização
   function init() {
     initUtmTracking();
 
@@ -785,7 +646,6 @@
     renderStep(0);
   }
 
-  // Run on DOM Ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
